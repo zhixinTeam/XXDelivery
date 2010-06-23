@@ -86,6 +86,7 @@ end;
 procedure InitTableViewStyle(const nView: TcxGridTableView);
 var i,nCount: integer;
 begin
+  nView.OptionsData.Deleting := False;
   nView.OptionsData.Editing := True;
   nView.OptionsBehavior.ImmediateEditor := False;
 
