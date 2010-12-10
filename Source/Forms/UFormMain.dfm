@@ -1396,6 +1396,7 @@ object fMainForm: TfMainForm
     Width = 399
     Height = 274
     Align = alClient
+    Images = FDM.Imagesmall
     Options = [pcoAlwaysShowGoDialogButton, pcoGoDialog, pcoGradient, pcoGradientClientArea, pcoRedrawOnResize]
     ShowFrame = True
     Style = 9
@@ -1408,12 +1409,12 @@ object fMainForm: TfMainForm
     ClientRectBottom = 273
     ClientRectLeft = 1
     ClientRectRight = 398
-    ClientRectTop = 19
+    ClientRectTop = 22
     object WorkPanel: TZnBitmapPanel
       Left = 1
-      Top = 19
+      Top = 22
       Width = 397
-      Height = 254
+      Height = 251
       Align = alClient
     end
   end
