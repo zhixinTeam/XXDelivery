@@ -11,7 +11,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   UMgrMenu, UTrayIcon, UDataModule, USysFun, ExtCtrls, Menus, UBitmapPanel,
   cxPC, cxClasses, dxNavBarBase, dxNavBarCollns, dxNavBar, cxControls,
-  cxSplitter, ComCtrls, StdCtrls;
+  cxSplitter, ComCtrls, StdCtrls, cxGraphics, cxLookAndFeels,
+  cxLookAndFeelPainters;
 
 type
   TfMainForm = class(TForm)
@@ -510,14 +511,28 @@ end;
 //Desc: 增减Frame
 procedure TfMainForm.DoFrameChange(const nName: string;
   const nCtrl: TWinControl; const nState: TControlChangeState);
-var nIdx: Integer;
+var nStr: string;
+    nIdx: Integer;
 begin
   if csDestroying in ComponentState then Exit;
   //主窗口退出时不处理
 
   if nState = fsNew then
-    wTab.Tabs.AddObject(nName, nCtrl);
-  //xxxxx
+  begin
+    PostMessage(Handle, WM_FrameChange, 0, 0); Exit;
+  end;
+
+  if (nState = fsActive) and (wTab.Tabs.IndexOf(nName) < 0) then
+  begin
+    nIdx := wTab.Tabs.AddObject(nName, nCtrl);
+    wTab.TabIndex := nIdx;
+
+    if nCtrl is TfFrameNormal then
+    begin
+      nStr := TfFrameNormal(nCtrl).PopedomItem;
+      wTab.Tabs[nIdx].ImageIndex := FDM.IconIndex(nStr);
+    end;
+  end;
 
   if nState = fsFree then
   begin
@@ -525,7 +540,14 @@ begin
      if wTab.Tabs.Objects[nIdx] = nCtrl then wTab.Tabs.Delete(nIdx);
   end;
 
+  if (wTab.TabIndex > -1) and (WorkPanel.ControlCount > 0) then
+  begin
+    nIdx := WorkPanel.ControlCount - 1;
+    if wTab.Tabs.Objects[wTab.TabIndex] = WorkPanel.Controls[nIdx] then Exit;
+  end;
+
   PostMessage(Handle, WM_FrameChange, 0, 0);
+  //update tab status
 end;
 
 //Desc: 同步活动的Frame和Tab
