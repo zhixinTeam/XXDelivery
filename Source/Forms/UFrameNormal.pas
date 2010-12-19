@@ -74,6 +74,7 @@ type
     procedure InitFormData(const nWhere: string = '';
      const nQuery: TADOQuery = nil); virtual;
     function InitFormDataSQL(const nWhere: string): string; virtual;
+    procedure AfterInitFormData; virtual;
     {*载入数据*}
     procedure GetData(Sender: TObject; var nData: string); virtual;
     function SetData(Sender: TObject; const nData: string): Boolean; virtual;
@@ -291,7 +292,14 @@ begin
   finally
     ShowMsgOnLastPanelOfStatusBar('');
     BtnRefresh.Enabled := True;
+    AfterInitFormData;
   end;
+end;
+
+//Desc: 数据载入后
+procedure TfFrameNormal.AfterInitFormData;
+begin
+
 end;
 
 //------------------------------------------------------------------------------
