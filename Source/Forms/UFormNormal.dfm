@@ -3,24 +3,24 @@ inherited fFormNormal: TfFormNormal
   Top = 305
   BorderIcons = [biSystemMenu, biMinimize]
   BorderStyle = bsSingle
-  ClientHeight = 136
-  ClientWidth = 194
+  ClientHeight = 129
+  ClientWidth = 223
   OldCreateOrder = True
-  OnKeyDown = nil
   PixelsPerInch = 96
   TextHeight = 12
   object dxLayout1: TdxLayoutControl
     Left = 0
     Top = 0
-    Width = 194
-    Height = 136
+    Width = 223
+    Height = 129
     Align = alClient
     TabOrder = 0
     TabStop = False
+    AutoContentSizes = [acsWidth, acsHeight]
     LookAndFeel = FDM.dxLayoutWeb1
     object BtnOK: TButton
-      Left = 11
-      Top = 48
+      Left = 77
+      Top = 96
       Width = 65
       Height = 22
       Caption = #20445#23384
@@ -28,8 +28,8 @@ inherited fFormNormal: TfFormNormal
       OnClick = BtnOKClick
     end
     object BtnExit: TButton
-      Left = 81
-      Top = 48
+      Left = 147
+      Top = 96
       Width = 65
       Height = 22
       Caption = #21462#28040
@@ -41,9 +41,13 @@ inherited fFormNormal: TfFormNormal
       Hidden = True
       ShowBorder = False
       object dxGroup1: TdxLayoutGroup
+        AutoAligns = [aaHorizontal]
+        AlignVert = avClient
         Caption = #22522#26412#20449#24687
       end
       object dxLayout1Group1: TdxLayoutGroup
+        AutoAligns = [aaHorizontal]
+        AlignVert = avBottom
         ShowCaption = False
         Hidden = True
         LayoutDirection = ldHorizontal
