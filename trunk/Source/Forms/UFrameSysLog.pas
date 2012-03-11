@@ -96,8 +96,8 @@ function TfFrameSysLog.InitFormDataSQL(const nWhere: string): string;
 begin
   EditDate.Text := Format('%s жа %s', [Date2Str(FStart), Date2Str(FEnd)]);
   
-  Result := 'Select * From %s Where L_Date>=''%s'' And L_Date<=''%s''';
-  Result := Format(Result, [sTable_SysLog, DateToStr(FStart), DateToStr(FEnd)]);
+  Result := 'Select * From %s Where L_Date>=''%s'' And L_Date<''%s''';
+  Result := Format(Result, [sTable_SysLog, DateToStr(FStart), DateToStr(FEnd+1)]);
   if nWhere <> '' then Result := Result + ' And (' + nWhere + ')';
 end;
 

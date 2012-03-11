@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit UFormLogin;
 
+{$I link.inc}
 interface
 
 uses
@@ -39,7 +40,7 @@ implementation
 
 {$R *.dfm}
 uses
-  ULibFun, USysConst, USysDB, USysPopedom, USysMenu, UMgrPopedom, UMgrLog,
+  ULibFun, USysConst, USysDB, USysPopedom, USysMenu, UMgrPopedom, USysLoger,
   UFormWait, UFormConn, UDataModule;
   
 ResourceString
@@ -47,16 +48,9 @@ ResourceString
   sUserLoginOK = '登陆系统成功,用户:[ %s ]';
   sConnDBError = '连接数据库失败,配置错误或远程无响应';
 
-//------------------------------------------------------------------------------
 procedure WriteLog(const nEvent: string);
-var nItem: PLogItem;
 begin
-  nItem := gLogManager.NewLogItem;
-  nItem.FWriter.FOjbect := TfFormLogin;
-  nItem.FWriter.FDesc := '用户登陆';
-  nItem.FLogTag := [ltWriteFile];
-  nItem.FEvent := nEvent;
-  gLogManager.AddNewLog(nItem);
+  gSysLoger.AddLog(TfFormLogin, '用户登陆', nEvent);
 end;
 
 //Desc: 用户登录
@@ -183,12 +177,9 @@ begin
                               MI('$b',Edit_User.Text),
                               MI('$c',Edit_Pwd.Text),
                               MI('$d', IntToStr(cPopedomUser_Normal))]);
-
-    FDM.SqlQuery.Close;
-    FDM.SqlQuery.SQL.Text := nStr;
-    FDM.SqlQuery.Open;
-
-    if FDM.SqlQuery.RecordCount <> 1 then
+    //xxxxx
+    
+    if FDM.QuerySQL(nStr).RecordCount <> 1 then
     begin
       Edit_User.SetFocus;
       nMsg := '错误的用户名或密码,请重新输入'; Exit;
@@ -199,6 +190,16 @@ begin
     gSysParam.FUserPwd := Edit_Pwd.Text;
 
     ShowWaitForm(nil, '载入数据');
+    {$IFDEF EnableBackupDB}
+    gSysParam.FUsesBackDB := FDM.IsEnableBackupDB;
+    if gSysParam.FUsesBackDB then
+    begin
+      nStr := BuildConnectDBStr(nil, '', gPath + sDBConfig_bk);
+      FDM.Conn_Bak.Connected := False;
+      FDM.Conn_Bak.ConnectionString := nStr;
+    end;
+    {$ENDIF}
+
     if not gMenuManager.IsValidProgID then
     begin
       WriteLog('验证程序标识失败');

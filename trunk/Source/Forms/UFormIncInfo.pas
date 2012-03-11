@@ -9,7 +9,8 @@ interface
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   UDataModule, StdCtrls, ExtCtrls, dxLayoutControl, cxContainer, cxEdit,
-  cxTextEdit, cxControls, cxMemo, UFormBase;
+  cxTextEdit, cxControls, cxMemo, UFormBase, cxGraphics, cxLookAndFeels,
+  cxLookAndFeelPainters;
 
 type
   TfFormIncInfo = class(TBaseForm)
@@ -107,13 +108,17 @@ end;
 procedure TfFormIncInfo.BtnOKClick(Sender: TObject);
 var nIni: TIniFile;
 begin
+  EditName.Text := Trim(EditName.Text);
+  if EditName.Text = '' then
+  begin
+    EditName.SetFocus;
+    ShowMsg('请输入公司名称', sHint); Exit;
+  end;
+
   nIni := TIniFile.Create(gPath + sConfigFile);
   try
-    if EditName.Text <> '' then
-    begin
-      gSysParam.FHintText := EditName.Text;
-      nIni.WriteString(gSysParam.FProgID, 'HintText', EditName.Text);
-    end;
+    gSysParam.FHintText := EditName.Text;
+    nIni.WriteString(gSysParam.FProgID, 'HintText', EditName.Text);
 
     nIni.WriteString(sCompany, 'Name', EditName.Text);
     nIni.WriteString(sCompany, 'Phone', EditPhone.Text);

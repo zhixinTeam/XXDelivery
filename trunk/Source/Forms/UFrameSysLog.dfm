@@ -16,9 +16,9 @@ inherited fFrameSysLog: TfFrameSysLog
     end
   end
   inherited cxGrid1: TcxGrid
-    Top = 197
+    Top = 199
     Width = 761
-    Height = 170
+    Height = 168
   end
   inherited dxLayout1: TdxLayoutControl
     Width = 761
@@ -29,18 +29,18 @@ inherited fFrameSysLog: TfFrameSysLog
       Hint = 'T.L_Date'
       ParentFont = False
       TabOrder = 3
-      Width = 135
+      Width = 115
     end
     object cxTextEdit4: TcxTextEdit [1]
-      Left = 279
+      Left = 259
       Top = 93
       Hint = 'T.L_ItemID'
       ParentFont = False
       TabOrder = 4
-      Width = 135
+      Width = 115
     end
     object cxTextEdit5: TcxTextEdit [2]
-      Left = 477
+      Left = 437
       Top = 93
       Hint = 'T.L_Event'
       ParentFont = False
@@ -59,10 +59,10 @@ inherited fFrameSysLog: TfFrameSysLog
       Properties.OnButtonClick = EditManPropertiesButtonClick
       TabOrder = 0
       OnKeyPress = OnCtrlKeyPress
-      Width = 135
+      Width = 115
     end
     object EditItem: TcxButtonEdit [4]
-      Left = 279
+      Left = 259
       Top = 36
       ParentFont = False
       Properties.Buttons = <
@@ -73,10 +73,10 @@ inherited fFrameSysLog: TfFrameSysLog
       Properties.OnButtonClick = EditManPropertiesButtonClick
       TabOrder = 1
       OnKeyPress = OnCtrlKeyPress
-      Width = 135
+      Width = 115
     end
     object EditDate: TcxButtonEdit [5]
-      Left = 477
+      Left = 437
       Top = 36
       ParentFont = False
       Properties.Buttons = <
@@ -86,7 +86,7 @@ inherited fFrameSysLog: TfFrameSysLog
         end>
       Properties.OnButtonClick = EditDatePropertiesButtonClick
       TabOrder = 2
-      Width = 170
+      Width = 175
     end
     inherited dxGroup1: TdxLayoutGroup
       inherited GroupSearch1: TdxLayoutGroup
@@ -128,7 +128,7 @@ inherited fFrameSysLog: TfFrameSysLog
     end
   end
   inherited cxSplitter1: TcxSplitter
-    Top = 189
+    Top = 191
     Width = 761
   end
   inherited TitlePanel1: TZnBitmapPanel
