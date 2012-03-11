@@ -51,6 +51,7 @@ object FDM: TFDM
     StyleFocused.Color = clInfoBk
     Left = 24
     Top = 128
+    PixelsPerInch = 96
   end
   object dxLayout1: TdxLayoutLookAndFeelList
     Left = 76
@@ -1058,5 +1059,10 @@ object FDM: TFDM
     Kind = lfOffice11
     Left = 26
     Top = 184
+  end
+  object Conn_Bak: TADOConnection
+    LoginPrompt = False
+    Left = 234
+    Top = 10
   end
 end

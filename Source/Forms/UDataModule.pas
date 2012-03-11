@@ -31,14 +31,21 @@ type
     dxPrinter1: TdxComponentPrinter;
     dxGridLink1: TdxGridReportLink;
     cxLoF1: TcxLookAndFeelController;
+    Conn_Bak: TADOConnection;
     procedure DataModuleCreate(Sender: TObject);
   private
     { Private declarations }
+    function CheckQueryConnection(const nQuery: TADOQuery;
+     const nUseBackdb: Boolean): Boolean;
+    {*连接有效性*}
   public
     { Public declarations }
-    function QuerySQL(const nSQL: string): TDataSet;
-    function QueryTemp(const nSQL: string): TDataSet;
-    procedure QueryData(const nQuery: TADOQuery; const nSQL: string);
+    function IsEnableBackupDB: Boolean;
+    {*备用库*}
+    function QuerySQL(const nSQL: string; const nUseBackdb: Boolean = False): TDataSet;
+    function QueryTemp(const nSQL: string; const nUseBackdb: Boolean = False): TDataSet;
+    procedure QueryData(const nQuery: TADOQuery; const nSQL: string;
+     const nUseBackdb: Boolean = False);
     {*查询操作*}
     function ExecuteSQL(const nSQL: string): integer;
     {*执行写操作*}
@@ -48,8 +55,8 @@ type
     procedure LoadSystemIcons(const nIconFile: string);
     {*载入图标*}
     function WriteSysLog(const nGroup,nItem,nEvent: string;
-     const nHint: Boolean = True;
-     const nKeyID: string = ''; const nMan: string = ''): Boolean;
+     const nHint: Boolean = True; const nExec: Boolean = True;
+     const nKeyID: string = ''; const nMan: string = ''): string;
     {*系统日志*}
     function SQLServerNow: string;
     function ServerNow: TDateTime;
@@ -84,8 +91,13 @@ implementation
 
 {$R *.dfm}
 uses
-  Variants, cxImageListEditor, UFormCtrl, UMgrIni, USysConst, USysDB
+  Variants, cxImageListEditor, UFormCtrl, UMgrIni, USysLoger, USysConst, USysDB
   {$IFDEF UseReport},UDataReport{$ENDIF};
+
+procedure WriteLog(const nEvent: string);
+begin
+  gSysLoger.AddLog(TFDM, '数据模块', nEvent);
+end;
 
 //------------------------------------------------------------------------------
 //Date: 2009-5-27
@@ -231,10 +243,10 @@ begin
 end;
 
 //Date: 2009-6-8
-//Parm: 信息分组;标识;事件;辅助标识;操作人
+//Parm: 信息分组;标识;事件;错误提示;执行;辅助标识;操作人
 //Desc: 像系统日志表写入一条日志记录
-function TFDM.WriteSysLog(const nGroup, nItem, nEvent: string;
-  const nHint: Boolean; const nKeyID, nMan: string): Boolean;
+function TFDM.WriteSysLog(const nGroup,nItem,nEvent: string;
+ const nHint,nExec: Boolean; const nKeyID,nMan: string): string;
 var nStr,nSQL: string;
 begin
   nSQL := 'Insert Into $T(L_Date,L_Man,L_Group,L_ItemID,L_KeyID,L_Event) ' +
@@ -248,12 +260,14 @@ begin
   else nStr := nMan;
 
   nSQL := MacroValue(nSQL, [MI('$M', nStr)]);
+  Result := nSQL;
+
+  if nExec then
   try
     ExecuteSQL(nSQL);
-    Result := True;
   except
-    Result := False;
-    if nHint then ShowMsg('写入系统日志时发生错误', sHint);
+    Result := '';
+    if nHint then ShowMsg('系统日志写入错误', sHint);
   end;
 end;
 
@@ -572,48 +586,130 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+//Desc: 是否启用备用数据库
+function TFDM.IsEnableBackupDB: Boolean;
+var nStr: string;
+begin
+  {$IFDEF EnableBackupDB}
+  nStr := 'Select D_Value From $T Where D_Name=''$N'' and D_Memo=''$M''';
+  nStr := MacroValue(nStr, [MI('$T', sTable_SysDict), MI('$N', sFlag_SysParam),
+                           MI('$M', sFlag_EnableBakdb)]);
+  //xxxxx
+
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+       Result := Fields[0].AsString = sFlag_Yes
+  else Result := False;
+  {$ELSE}
+  Result := False;
+  {$ENDIF}
+end;
+
+//Desc: 检查nQuery.Connetion是否有效
+function TFDM.CheckQueryConnection(const nQuery: TADOQuery;
+ const nUseBackdb: Boolean): Boolean;
+begin
+  if not ADOConn.Connected then
+    ADOConn.Connected := True;
+  Result := ADOConn.Connected;
+
+  if not Result then
+    raise Exception.Create('数据库连接已断开,且重新连接失败.');
+  //xxxxx
+
+  if nQuery.Connection <> ADOConn then
+  begin
+    nQuery.Close;
+    nQuery.Connection := ADOConn;
+  end;
+  
+  {$IFDEF EnableBackupDB}
+  if not nUseBackdb then Exit;
+  if IsEnableBackupDB <> gSysParam.FUsesBackDB then
+    raise Exception.Create('数据库服务异常,请重新登录系统.');
+  //xxxxx
+
+  if gSysParam.FUsesBackDB then
+  begin
+    if not Conn_Bak.Connected then
+      Conn_Bak.Connected := True;
+    Result := Conn_Bak.Connected;
+
+    if not Result then
+      raise Exception.Create('数据库连接已断开,且重新连接失败.');
+    //xxxxx
+
+    if nQuery.Connection <> Conn_Bak then
+    begin
+      nQuery.Close;
+      nQuery.Connection := Conn_Bak;
+    end;
+  end;
+  {$ENDIF}
+end;
+
 //Desc: 执行nSQL写操作
 function TFDM.ExecuteSQL(const nSQL: string): integer;
 begin
-  Command.Close;
-  Command.SQL.Text := nSQL;
-  Result := Command.ExecSQL;
+  try
+    Command.Close;
+    Command.SQL.Text := nSQL;
+    Result := Command.ExecSQL;
+  except
+    on E:Exception do
+    begin
+      WriteLog(E.Message);
+      raise;
+    end;
+  end;
 end;
 
 //Desc: 常规查询
-function TFDM.QuerySQL(const nSQL: string): TDataSet;
+function TFDM.QuerySQL(const nSQL: string; const nUseBackdb: Boolean): TDataSet;
 begin
-  Result := SQLQuery;
-  SQLQuery.Close;
-  SQLQuery.SQL.Text := nSQL;
-  SQLQuery.Open;
+  if CheckQueryConnection(SQLQuery, nUseBackdb) then
+  begin
+    SQLQuery.Close;
+    SQLQuery.SQL.Text := nSQL;
+    SQLQuery.Open;
+
+    Result := SQLQuery;
+  end else Result := nil;
 end;
 
 //Desc: 临时查询
-function TFDM.QueryTemp(const nSQL: string): TDataSet;
+function TFDM.QueryTemp(const nSQL: string; const nUseBackdb: Boolean): TDataSet;
 begin
-  Result := SQLTemp;
-  SQLTemp.Close;
-  SQLTemp.SQL.Text := nSQL;
-  SQLTemp.Open;
+  if CheckQueryConnection(SQLTemp, nUseBackdb) then
+  begin
+    SQLTemp.Close;
+    SQLTemp.SQL.Text := nSQL;
+    SQLTemp.Open;
+    
+    Result := SQLTemp;
+  end else Result := nil;
 end;
 
 //Desc: 用nQuery执行nSQL语句
-procedure TFDM.QueryData(const nQuery: TADOQuery; const nSQL: string);
+procedure TFDM.QueryData(const nQuery: TADOQuery; const nSQL: string;
+ const nUseBackdb: Boolean);
 var nBookMark: Pointer;
 begin
-  nQuery.DisableControls;
-  nBookMark := nQuery.GetBookmark;
-  try
-    nQuery.Close;
-    nQuery.SQL.Text := nSQL;
-    nQuery.Open;
+  if CheckQueryConnection(nQuery, nUseBackdb) then
+  begin
+    nQuery.DisableControls;
+    nBookMark := nQuery.GetBookmark;
+    try
+      nQuery.Close;
+      nQuery.SQL.Text := nSQL;
+      nQuery.Open;
 
-    if nQuery.BookmarkValid(nBookMark) then
-      nQuery.GotoBookmark(nBookMark);
-  finally
-    nQuery.FreeBookmark(nBookMark);
-    nQuery.EnableControls;
+      if nQuery.BookmarkValid(nBookMark) then
+        nQuery.GotoBookmark(nBookMark);
+    finally
+      nQuery.FreeBookmark(nBookMark);
+      nQuery.EnableControls;
+    end;
   end;
 end;
 

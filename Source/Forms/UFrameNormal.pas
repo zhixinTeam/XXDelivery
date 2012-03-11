@@ -57,6 +57,8 @@ type
   protected
     FBarImage: TBitmap;
     {*工具条*}
+    FEnableBackDB: Boolean;
+    {*备用库*}
     FWhere: string;
     {*过滤条件*}
     FShowDetailInfo: Boolean;
@@ -115,6 +117,7 @@ var nStr: string;
 begin
   Name := MakeFrameName(FrameID);
   FWhere := '';
+  FEnableBackDB := False;
   FShowDetailInfo := True;
 
   nIni := TIniFile.Create(gPath + sFormConfig);
@@ -287,8 +290,8 @@ begin
     if nStr = '' then Exit;
 
     if Assigned(nQuery) then
-         FDM.QueryData(nQuery, nStr)
-    else FDM.QueryData(SQLQuery, nStr);
+         FDM.QueryData(nQuery, nStr, FEnableBackDB)
+    else FDM.QueryData(SQLQuery, nStr, FEnableBackDB);
   finally
     ShowMsgOnLastPanelOfStatusBar('');
     BtnRefresh.Enabled := True;

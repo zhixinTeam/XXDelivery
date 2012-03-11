@@ -82,6 +82,12 @@ implementation
 
 procedure TFDR.DataModuleCreate(Sender: TObject);
 begin
+  {$IFDEF TrialVersion}
+  with Report1.PreviewOptions do
+    Buttons := Buttons - [pbPrint];
+  //trial version no print
+  {$ENDIF}
+
   FParamList := TList.Create;
   FHotKeyOver := True;
 

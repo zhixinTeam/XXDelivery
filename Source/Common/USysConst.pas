@@ -52,6 +52,7 @@ type
 
     FRecMenuMax : integer;                           //导航栏个数
     FIconFile   : string;                            //图标配置文件
+    FUsesBackDB : Boolean;                           //使用备份库
   end;
   //系统参数
 
@@ -132,8 +133,11 @@ procedure InitMenuModuleList;
 begin
   gMenuModule := TList.Create;
 
-  AddMenuModuleItem('SYSLOG', cFI_FrameSysLog);
-  //系统日志
+  AddMenuModuleItem('MAIN_A01', cFI_FormIncInfo, mtForm);
+  AddMenuModuleItem('MAIN_A02', cFI_FrameSysLog);
+  AddMenuModuleItem('MAIN_A03', cFI_FormBackup, mtForm);
+  AddMenuModuleItem('MAIN_A04', cFI_FormRestore, mtForm);
+  AddMenuModuleItem('MAIN_A05', cFI_FormChangePwd, mtForm);
 end;
 
 //Desc: 清理模块列表

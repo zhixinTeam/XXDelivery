@@ -9,8 +9,29 @@ unit USysModule;
 interface
 
 uses
-  UFrameLog, UFrameSysLog, UFormIncInfo;
+  UFrameLog, UFrameSysLog, UFormIncInfo, UFormBackupSQL, UFormRestoreSQL,
+  UFormPassword;
+
+procedure InitSystemObject;
+procedure FreeSystemObject;
 
 implementation
+
+uses
+  SysUtils, USysLoger, USysConst;
+
+//Desc: 初始化系统对象
+procedure InitSystemObject;
+begin
+  if not Assigned(gSysLoger) then
+    gSysLoger := TSysLoger.Create(gPath + sLogDir);
+  //system loger
+end;
+
+//Desc: 释放系统对象
+procedure FreeSystemObject;
+begin
+  FreeAndNil(gSysLoger);
+end;
 
 end.

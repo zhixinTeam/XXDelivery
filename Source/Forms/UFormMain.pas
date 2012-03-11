@@ -69,20 +69,13 @@ implementation
 {$R *.dfm}
 
 uses
-  ShellAPI, IniFiles, UcxChinese, ULibFun, UMgrControl, UMgrLog,
-  UMgrIni, USysDB, USysConst, USysObject, USysModule, USysMenu, USysPopedom,
+  ShellAPI, IniFiles, UcxChinese, ULibFun, UMgrControl, UMgrIni,
+  USysLoger, USysDB, USysConst, USysModule, USysMenu, USysPopedom,
   UFormWait, UFormLogin, UFrameBase, UFrameNormal, UFormBase;
 
-//------------------------------------------------------------------------------
 procedure WriteLog(const nEvent: string);
-var nItem: PLogItem;
 begin
-  nItem := gLogManager.NewLogItem;
-  nItem.FWriter.FOjbect := TfMainForm;
-  nItem.FWriter.FDesc := '系统主模块';
-  nItem.FLogTag := [ltWriteFile];
-  nItem.FEvent := nEvent;
-  gLogManager.AddNewLog(nItem);
+  gSysLoger.AddLog(TfMainForm, '系统主模块', nEvent);
 end;
 
 //------------------------------------------------------------------------------
