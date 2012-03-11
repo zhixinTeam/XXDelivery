@@ -179,6 +179,9 @@ begin
 
     FTrayIcon := TTrayIcon.Create(Self);
     FTrayIcon.Visible := True;
+
+    RunSystemObject;
+    //run them
     WriteLog('ÏµÍ³Æô¶¯');
   end else
   begin
