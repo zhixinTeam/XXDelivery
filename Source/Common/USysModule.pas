@@ -13,6 +13,7 @@ uses
   UFormPassword;
 
 procedure InitSystemObject;
+procedure RunSystemObject;
 procedure FreeSystemObject;
 
 implementation
@@ -26,6 +27,12 @@ begin
   if not Assigned(gSysLoger) then
     gSysLoger := TSysLoger.Create(gPath + sLogDir);
   //system loger
+end;
+
+//Desc: 运行系统对象
+procedure RunSystemObject;
+begin
+
 end;
 
 //Desc: 释放系统对象
