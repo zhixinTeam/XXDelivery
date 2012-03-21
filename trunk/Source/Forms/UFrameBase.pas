@@ -10,7 +10,15 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs;
 
+const
+  WM_FrameChange = WM_User + $0027;
+  
 type
+  TControlChangeState = (fsNew, fsFree, fsActive);
+  TControlChangeEvent = procedure (const nName: string; const nCtrl: TWinControl;
+    const nState: TControlChangeState) of object;
+  //控件变动
+  
   PFrameCommandParam = ^TFrameCommandParam;
   TFrameCommandParam = record
     FCommand: integer;
@@ -34,7 +42,10 @@ type
     FIsBusy: Boolean;
     {*繁忙状态*}
     FPopedom: string;
-    {*权限项*}         
+    {*权限项*}
+    procedure SetZOrder(TopMost: Boolean); override;
+    {*位置切换*}
+    function FrameTitle: string; virtual;
     procedure OnCreateFrame; virtual;
     procedure OnShowFrame; virtual;
     procedure OnDestroyFrame; virtual;
@@ -51,6 +62,7 @@ type
     {*处理命令*}
     class function GetCtrlParentForm(const nCtrl: TWinControl): TForm;
     {*获取窗体*}
+    class function MakeFrameName(const nFrameID: integer): string;
     class function FrameID: integer; virtual; abstract;
     {*标识*}
     property ParentForm: TForm read FParentForm;
@@ -62,6 +74,7 @@ type
 function CreateBaseFrameItem(const nFrameID: Integer; const nParent: TWinControl;
  const nPopedom: string = ''): TBaseFrame;
 function BroadcastFrameCommand(Sender: TObject; const nCmd:integer): integer;
+procedure SetFrameChangeEvent(const nCallBack: TControlChangeEvent);
 //入口函数
 
 implementation
@@ -69,6 +82,15 @@ implementation
 {$R *.dfm}
 uses
   UMgrControl;
+
+var
+  gFrameChange: TControlChangeEvent = nil;
+  //Frame变动
+
+procedure SetFrameChangeEvent(const nCallBack: TControlChangeEvent);
+begin
+  gFrameChange := nCallBack;
+end;
 
 //Desc: 将命令广播给所有的Frame类
 function BroadcastFrameCommand(Sender: TObject; const nCmd:integer): integer;
@@ -112,9 +134,15 @@ end;
 constructor TBaseFrame.Create(AOwner: TComponent);
 begin
   inherited Create(AOwner);
+  Name := MakeFrameName(FrameID);
+  
   if not GetParentForm then
     raise Exception.Create('Invalid Frame Owner');
   //no parent isn't invalid
+
+  if Assigned(gFrameChange) then
+    gFrameChange(FrameTitle, Self, fsNew);
+  //xxxxx
 
   FIsBusy := False;
   OnCreateFrame;
@@ -122,6 +150,10 @@ end;
 
 destructor TBaseFrame.Destroy;
 begin
+  if Assigned(gFrameChange) then
+    gFrameChange(FrameTitle, Self, fsFree);
+  //xxxxx
+
   OnDestroyFrame;
   gControlManager.FreeCtrl(FrameID, False);
   inherited;
@@ -149,6 +181,21 @@ procedure TBaseFrame.CMRelease(var Message: TMessage);
 begin
   inherited;
   Free;
+end;
+
+//Desc: 依据FrameID生成组件名
+class function TBaseFrame.MakeFrameName(const nFrameID: integer): string;
+begin
+  Result := 'Frame' + IntToStr(nFrameID);
+end;
+
+//Desc: 组件Z轴位置变动
+procedure TBaseFrame.SetZOrder(TopMost: Boolean);
+begin
+  inherited;
+  if Assigned(gFrameChange) then
+    gFrameChange(FrameTitle, Self, fsActive);
+  //xxxxx
 end;
 
 //Desc: 显示时触发
@@ -197,6 +244,11 @@ end;
 procedure TBaseFrame.DoOnClose(var nAction: TCloseAction);
 begin
 
+end;
+
+function TBaseFrame.FrameTitle: string;
+begin
+  Result := Name;
 end;
 
 //Desc: 显示

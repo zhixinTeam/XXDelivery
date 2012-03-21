@@ -8,7 +8,7 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls,
-  Forms, cxButtonEdit, UMgrControl, ULibFun, StdCtrls;
+  Forms, cxButtonEdit, UMgrControl, ULibFun;
 
 type
   TBaseFormClass = class of TBaseForm;
