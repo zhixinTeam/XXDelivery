@@ -9,10 +9,10 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  UMgrMenu, UTrayIcon, UDataModule, USysFun, ExtCtrls, Menus, UBitmapPanel,
-  cxPC, cxClasses, dxNavBarBase, dxNavBarCollns, dxNavBar, cxControls,
-  cxSplitter, ComCtrls, StdCtrls, cxGraphics, cxLookAndFeels,
-  cxLookAndFeelPainters;
+  UMgrMenu, UTrayIcon, UDataModule, USysFun, UFrameBase, cxGraphics,
+  cxControls, cxLookAndFeelPainters, ExtCtrls, Menus,
+  UBitmapPanel, cxPC, cxClasses, dxNavBarBase, dxNavBarCollns, dxNavBar,
+  cxSplitter, ComCtrls, StdCtrls, cxLookAndFeels;
 
 type
   TfMainForm = class(TForm)
@@ -71,7 +71,7 @@ implementation
 uses
   ShellAPI, IniFiles, UcxChinese, ULibFun, UMgrControl, UMgrIni,
   USysLoger, USysDB, USysConst, USysModule, USysMenu, USysPopedom,
-  UFormWait, UFormLogin, UFrameBase, UFrameNormal, UFormBase;
+  UFormWait, UFormLogin, UFormBase;
 
 procedure WriteLog(const nEvent: string);
 begin
@@ -523,9 +523,9 @@ begin
     nIdx := wTab.Tabs.AddObject(nName, nCtrl);
     wTab.TabIndex := nIdx;
 
-    if nCtrl is TfFrameNormal then
+    if nCtrl is TBaseFrame then
     begin
-      nStr := TfFrameNormal(nCtrl).PopedomItem;
+      nStr := TBaseFrame(nCtrl).PopedomItem;
       wTab.Tabs[nIdx].ImageIndex := FDM.IconIndex(nStr);
     end;
   end;
