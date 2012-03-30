@@ -162,8 +162,9 @@ begin
       nList := TStringList.Create;
       LoadConnecteDBConfig(nList);
 
-      if nList.Values[sConn_Key_DBName] = 'µ¥»ú' then
-        gSysDBType := dtAccess;
+      nStr := nList.Values[sConn_Key_DBType];
+      if IsNumber(nStr, False) then
+        gSysDBType := TSysDatabaseType(StrToInt(nStr));
       nList.Free;
     except
       if Assigned(nList) then nList.Free;
@@ -194,7 +195,7 @@ begin
     gSysParam.FUsesBackDB := FDM.IsEnableBackupDB;
     if gSysParam.FUsesBackDB then
     begin
-      nStr := BuildConnectDBStr(nil, '', gPath + sDBConfig_bk);
+      nStr := BuildFixedConnStr(sDBConfig_bk, True); 
       FDM.Conn_Bak.Connected := False;
       FDM.Conn_Bak.ConnectionString := nStr;
     end;

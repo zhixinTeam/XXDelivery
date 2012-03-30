@@ -104,6 +104,7 @@ ResourceString
   sFormConfig         = 'FormInfo.ini';              //窗体配置
   sSetupSec           = 'Setup';                     //配置小节
   sDBConfig           = 'DBConn.ini';                //数据连接
+  sDBConfig_bk        = 'isbk';                      //备份库
 
   sExportExt          = '.txt';                      //导出默认扩展名
   sExportFilter       = '文本(*.txt)|*.txt|所有文件(*.*)|*.*';
