@@ -15,3 +15,5 @@
 
 {.$DEFINE EnableBackupDB}
 //备用数据库支持
+{.$DEFINE EnableDoubleDB}
+//双数据库支持
