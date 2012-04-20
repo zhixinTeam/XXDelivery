@@ -82,9 +82,7 @@ begin
   nStr := 'Update %s Set U_PASSWORD=''%s'' Where U_NAME=''%s''';
   nStr := Format(nStr, [sTable_User, EditNew.Text, gSysParam.FUserID]);
 
-  FDM.Command.Close;
-  FDM.Command.SQL.Text := nStr;
-  if FDM.Command.ExecSQL > 0 then
+  if FDM.ExecuteSQL(nStr, False) > 0 then
   begin
     gSysParam.FUserPwd := EditNew.Text;
     ModalResult := mrOK;

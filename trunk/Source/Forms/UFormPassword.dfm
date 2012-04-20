@@ -16,6 +16,7 @@ inherited fFormPassword: TfFormPassword
     Height = 152
     Align = alClient
     TabOrder = 0
+    TabStop = False
     AutoContentSizes = [acsWidth, acsHeight]
     LookAndFeel = FDM.dxLayoutWeb1
     object EditOld: TcxTextEdit
