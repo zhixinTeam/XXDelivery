@@ -52,6 +52,8 @@ type
       const ARect: TRect; Stage: TCustomDrawStage;
       var DefaultDraw: Boolean);
     procedure BtnExitClick(Sender: TObject);
+    procedure cxView1KeyPress(Sender: TObject; var Key: Char);
+    procedure cxView1DataControllerGroupingChanged(Sender: TObject);
   private
     { Private declarations }
   protected
@@ -63,6 +65,8 @@ type
     {*过滤条件*}
     FShowDetailInfo: Boolean;
     {*显示简明信息*}
+    FFullExpand: Boolean;
+    {*全部展开*}
     function FrameTitle: string; override;
     procedure OnCreateFrame; override;
     procedure OnDestroyFrame; override;
@@ -103,6 +107,8 @@ var nStr: string;
     nIni: TIniFile;
 begin
   FWhere := '';
+  FFullExpand := False;
+  
   FEnableBackDB := False;
   FShowDetailInfo := True;
 
@@ -221,8 +227,10 @@ begin
   if (cxView1.Controller.SelectedRowCount > 0) and (Sender is TComponent) and
      GetTableByHint(Sender as TComponent, nTable, nField)then
   begin
-    //nRIdx := cxView1.Controller.SelectedRows[0].RecordIndex;
-    nRIdx := cxView1.Controller.FocusedRecordIndex;
+    if cxView1.OptionsSelection.MultiSelect then
+         nRIdx := cxView1.Controller.FocusedRecordIndex
+    else nRIdx := cxView1.Controller.SelectedRows[0].RecordIndex;
+    
     if nRIdx < 0 then Exit;
     nObj := cxView1.DataController.GetItemByFieldName(nField);
     
@@ -297,6 +305,26 @@ begin
     nRect.Right := nRect.Left + FBarImage.Width;
     ToolBar1.Canvas.StretchDraw(nRect, FBarImage);
     nRect.Left := nRect.Left + FBarImage.Width;
+  end;
+end;
+
+//Desc: 分组后第一次按ESC键展开
+procedure TfFrameNormal.cxView1DataControllerGroupingChanged(Sender: TObject);
+begin
+  FFullExpand := False;
+end;
+
+//Desc: 展开收起
+procedure TfFrameNormal.cxView1KeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = Char(VK_ESCAPE) then
+  begin
+    Key := #0;
+    FFullExpand := not FFullExpand;
+
+    if FFullExpand then
+         cxView1.ViewData.Expand(False)
+    else cxView1.ViewData.Collapse(False);
   end;
 end;
 

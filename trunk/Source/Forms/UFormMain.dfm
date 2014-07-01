@@ -6,20 +6,20 @@ object fMainForm: TfMainForm
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -12
+  Font.Height = -15
   Font.Name = #23435#20307
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
-  TextHeight = 12
+  PixelsPerInch = 120
+  TextHeight = 15
   object HintPanel: TPanel
     Left = 0
     Top = 0
     Width = 594
-    Height = 80
+    Height = 100
     Align = alTop
     BevelOuter = bvNone
     Ctl3D = True
@@ -29,7 +29,7 @@ object fMainForm: TfMainForm
       Left = 0
       Top = 0
       Width = 373
-      Height = 80
+      Height = 100
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -705,7 +705,7 @@ object fMainForm: TfMainForm
       Left = 373
       Top = 0
       Width = 221
-      Height = 80
+      Height = 100
       Align = alRight
       AutoSize = True
       Picture.Data = {
@@ -1307,14 +1307,14 @@ object fMainForm: TfMainForm
       OnDblClick = Image1DblClick
     end
     object HintLabel: TLabel
-      Left = 8
-      Top = 40
-      Width = 90
-      Height = 20
+      Left = 13
+      Top = 63
+      Width = 144
+      Height = 33
       Caption = 'HintLabel'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
-      Font.Height = -20
+      Font.Height = -32
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
@@ -1323,7 +1323,7 @@ object fMainForm: TfMainForm
   end
   object sBar: TStatusBar
     Left = 0
-    Top = 354
+    Top = 352
     Width = 594
     Height = 20
     Panels = <
@@ -1341,81 +1341,70 @@ object fMainForm: TfMainForm
       end>
   end
   object Splitter1: TcxSplitter
-    Left = 187
-    Top = 80
+    Left = 293
+    Top = 100
     Width = 8
-    Height = 274
+    Height = 252
     HotZoneClassName = 'TcxXPTaskBarStyle'
     Control = NavBar1
   end
   object NavBar1: TdxNavBar
     Left = 0
-    Top = 80
-    Width = 187
-    Height = 274
+    Top = 100
+    Width = 293
+    Height = 252
     Align = alLeft
     ActiveGroupIndex = 0
-    DragCopyCursor = -1119
-    DragCursor = -1120
-    DragDropFlags = [fAllowDragLink, fAllowDropLink, fAllowDragGroup, fAllowDropGroup]
-    HotTrackedGroupCursor = crDefault
-    HotTrackedLinkCursor = -1118
-    LargeImages = FDM.ImageMid
-    SmallImages = FDM.Imagesmall
+    TabOrder = 3
     View = 10
+    OptionsImage.LargeImages = FDM.ImageMid
+    OptionsImage.SmallImages = FDM.Imagesmall
     object BarGroup1: TdxNavBarGroup
       Caption = #24120#29992#21151#33021
       LargeImageIndex = 0
-      LinksUseSmallImages = True
       SelectedLinkIndex = -1
-      ShowAsIconView = False
-      ShowControl = False
       TopVisibleLinkIndex = 0
-      UseControl = False
       UseSmallImages = False
-      Visible = True
       Links = <>
     end
     object BarGroup2: TdxNavBarGroup
       Caption = #26368#36817#20351#29992
       LargeImageIndex = 1
-      LinksUseSmallImages = True
       SelectedLinkIndex = -1
-      ShowAsIconView = False
-      ShowControl = False
       TopVisibleLinkIndex = 0
-      UseControl = False
       UseSmallImages = False
-      Visible = True
       Links = <>
     end
   end
-  object wTab: TcxTabControl
-    Left = 195
-    Top = 80
-    Width = 399
-    Height = 274
+  object wPage: TcxPageControl
+    Left = 301
+    Top = 100
+    Width = 293
+    Height = 252
+    ActivePage = Sheet1
     Align = alClient
     Images = FDM.Imagesmall
     Options = [pcoAlwaysShowGoDialogButton, pcoGoDialog, pcoGradient, pcoGradientClientArea, pcoRedrawOnResize]
     ShowFrame = True
     Style = 9
-    TabIndex = 0
     TabOrder = 4
-    Tabs.Strings = (
-      'test')
     TabSlants.Kind = skCutCorner
-    OnChange = wTabChange
-    ClientRectBottom = 273
+    OnChange = wPageChange
+    OnPageChanging = wPagePageChanging
+    ClientRectBottom = 251
     ClientRectLeft = 1
-    ClientRectRight = 398
+    ClientRectRight = 292
     ClientRectTop = 22
-    object WorkPanel: TZnBitmapPanel
-      Left = 1
-      Top = 22
-      Width = 397
-      Height = 251
-      Align = alClient
+    object Sheet1: TcxTabSheet
+      Caption = #40664#35748#32972#26223
+      ImageIndex = 0
+      object PanelBG: TZnBitmapPanel
+        Left = 0
+        Top = 0
+        Width = 291
+        Height = 229
+        Align = alClient
+      end
     end
   end
   object MainMenu1: TMainMenu
