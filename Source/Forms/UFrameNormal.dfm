@@ -102,12 +102,14 @@ inherited fFrameNormal: TfFrameNormal
     BorderStyle = cxcbsNone
     TabOrder = 1
     object cxView1: TcxGridDBTableView
+      OnKeyPress = cxView1KeyPress
       NavigatorButtons.ConfirmDelete = False
       OnFocusedRecordChanged = cxView1FocusedRecordChanged
       DataController.DataSource = DataSource1
       DataController.Summary.DefaultGroupSummaryItems = <>
       DataController.Summary.FooterSummaryItems = <>
       DataController.Summary.SummaryGroups = <>
+      DataController.OnGroupingChanged = cxView1DataControllerGroupingChanged
     end
     object cxLevel1: TcxGridLevel
       GridView = cxView1

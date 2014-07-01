@@ -28,13 +28,16 @@ type
     NavBar1: TdxNavBar;
     BarGroup1: TdxNavBarGroup;
     BarGroup2: TdxNavBarGroup;
-    wTab: TcxTabControl;
-    WorkPanel: TZnBitmapPanel;
+    wPage: TcxPageControl;
+    Sheet1: TcxTabSheet;
+    PanelBG: TZnBitmapPanel;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure Timer1Timer(Sender: TObject);
     procedure Image1DblClick(Sender: TObject);
-    procedure wTabChange(Sender: TObject);
+    procedure wPagePageChanging(Sender: TObject; NewPage: TcxTabSheet;
+      var AllowChange: Boolean);
+    procedure wPageChange(Sender: TObject);
   private
     { Private declarations }
     FTrayIcon: TTrayIcon;
@@ -99,8 +102,6 @@ var nStr: string;
     nIni: TIniFile;
 begin
   HintPanel.DoubleBuffered := True;
-  WorkPanel.DoubleBuffered := True;
-
   gStatusBar := sBar;
   nStr := Format(sDate, [DateToStr(Now)]);
   StatusBarMsg(nStr, cSBar_Date);
@@ -113,8 +114,6 @@ begin
 
   SetHintText(HintLabel);
   SetFrameChangeEvent(DoFrameChange);
-
-  wTab.Tabs.Clear;
   PostMessage(Handle, WM_FrameChange, 0, 0);
   
   nIni := TIniFile.Create(gPath + sFormConfig);
@@ -125,7 +124,7 @@ begin
 
     nStr := nIni.ReadString(Name, 'BgImage', gPath + sImageDir + 'bg.bmp');
     nStr := ReplaceGlobalPath(nStr);
-    if FileExists(nStr) then WorkPanel.LoadBitmap(nStr);
+    if FileExists(nStr) then PanelBG.LoadBitmap(nStr);
   finally
     nIni.Free;
   end;
@@ -203,8 +202,7 @@ begin
   end;
   {$ENDIF}
 
-  ShowWaitForm(Self, '正在退出系统');
-  Application.ProcessMessages;
+  ShowWaitForm(Self, '正在退出系统', True);
   try
     FormSaveConfig;          //窗体配置
 
@@ -447,6 +445,33 @@ begin
   end;
 end;
 
+//Date: 2014-06-26
+//Parm: 标识；多页签；是否创建
+//Desc: 检索nPage中标识为nTag的页面，不存在则创建
+function GetSheet(const nTag: Integer; const nPage: TcxPageControl;
+  const nNew: Boolean = True): TcxTabSheet;
+var nIdx: Integer;
+begin
+  Result := nil;
+
+  for nIdx:=nPage.PageCount - 1 downto 0 do
+  if nPage.Pages[nIdx].Tag = nTag then
+  begin
+    Result := nPage.Pages[nIdx];
+    Exit;
+  end;
+
+  if not nNew then Exit;
+  Result := TcxTabSheet.Create(nPage);
+  //new item
+
+  with Result do
+  begin
+    Tag := nTag;
+    PageControl := nPage;
+  end;
+end;
+
 //Desc: 处理菜单
 procedure TfMainForm.DoMenuClick(Sender: TObject);
 var nPos: integer;
@@ -499,7 +524,7 @@ begin
 
     if nP.FItemType = mtForm then
          CreateBaseFormItem(nP.FModule, nFull)
-    else CreateBaseFrameItem(nP.FModule, WorkPanel, nFull);
+    else CreateBaseFrameItem(nP.FModule, GetSheet(nP.FModule, wPage), nFull);
   end else DoFixedMenuActive(nFull);
 end;
 
@@ -508,75 +533,78 @@ end;
 procedure TfMainForm.DoFrameChange(const nName: string;
   const nCtrl: TWinControl; const nState: TControlChangeState);
 var nStr: string;
-    nIdx: Integer;
+    nInt: Integer;
+    nSheet: TcxTabSheet;
 begin
   if csDestroying in ComponentState then Exit;
   //主窗口退出时不处理
 
+  if nCtrl is TBaseFrame then
+       nInt := (nCtrl as TBaseFrame).FrameID
+  else Exit;
+
+  nSheet := GetSheet(nInt, wPage, False);
+  if not Assigned(nSheet) then Exit;
+
   if nState = fsNew then
   begin
-    PostMessage(Handle, WM_FrameChange, 0, 0); Exit;
+    nSheet.Caption := '启动中...';
   end;
 
-  if (nState = fsActive) and (wTab.Tabs.IndexOf(nName) < 0) then
+  if nState = fsActive then
   begin
-    nIdx := wTab.Tabs.AddObject(nName, nCtrl);
-    wTab.TabIndex := nIdx;
-
-    if nCtrl is TBaseFrame then
+    if nSheet.Caption <> nName then
     begin
+      nSheet.Caption := nName;
       nStr := TBaseFrame(nCtrl).PopedomItem;
-      wTab.Tabs[nIdx].ImageIndex := FDM.IconIndex(nStr);
+      nSheet.ImageIndex := FDM.IconIndex(nStr);
     end;
+    
+    wPage.ActivePage := nSheet;
+    //active
+    Exit;
   end;
 
   if nState = fsFree then
   begin
-    for nIdx:=wTab.Tabs.Count - 1 downto 0 do
-     if wTab.Tabs.Objects[nIdx] = nCtrl then wTab.Tabs.Delete(nIdx);
-  end;
-
-  if (wTab.TabIndex > -1) and (WorkPanel.ControlCount > 0) then
-  begin
-    nIdx := WorkPanel.ControlCount - 1;
-    if wTab.Tabs.Objects[wTab.TabIndex] = WorkPanel.Controls[nIdx] then Exit;
+    //nothing
   end;
 
   PostMessage(Handle, WM_FrameChange, 0, 0);
   //update tab status
 end;
 
-//Desc: 同步活动的Frame和Tab
+//Desc: 依据状态设置Page风格
 procedure TfMainForm.WMFrameChange(var nMsg: TMessage);
 var nIdx: Integer;
-    nCtrl: TControl;
 begin
-  if WorkPanel.ControlCount > 0 then
-  begin
-    wTab.HideTabs := False;
-    wTab.ShowFrame := True;
-    nCtrl := WorkPanel.Controls[WorkPanel.ControlCount - 1];
+  for nIdx:=wPage.PageCount - 1 downto 0 do
+   if wPage.Pages[nIdx].ControlCount < 1 then
+    wPage.Pages[nIdx].Free;
+  //xxxxx
 
-    for nIdx:=wTab.Tabs.Count - 1 downto 0 do
-     if wTab.Tabs.Objects[nIdx] = nCtrl then wTab.TabIndex := nIdx;
+  if wPage.PageCount > 1 then
+  begin
+    Sheet1.TabVisible := False;
+    wPage.ShowFrame := True;
   end else
   begin
-    wTab.HideTabs := True;
-    wTab.ShowFrame := False;
+    Sheet1.TabVisible  := False;
+    wPage.ShowFrame := False;
+    wPage.ActivePage := Sheet1;
   end;
 end;
 
-//Desc: 同步活动Tab和Frame
-procedure TfMainForm.wTabChange(Sender: TObject);
+//Desc：避免切换闪烁
+procedure TfMainForm.wPagePageChanging(Sender: TObject;
+  NewPage: TcxTabSheet; var AllowChange: Boolean);
 begin
-  if wTab.Tabs.Count > 0 then
-  try
-    if wTab.Tabs.Objects[wTab.TabIndex] is TWinControl then
-      TWinControl(wTab.Tabs.Objects[wTab.TabIndex]).BringToFront;
-    //xxxxx
-  except
-    //ignor any error
-  end;
+  LockWindowUpdate(wPage.Handle);
+end;
+
+procedure TfMainForm.wPageChange(Sender: TObject);
+begin
+  LockWindowUpdate(0);
 end;
 
 end.
