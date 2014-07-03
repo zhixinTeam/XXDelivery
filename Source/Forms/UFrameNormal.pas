@@ -65,6 +65,8 @@ type
     {*过滤条件*}
     FShowDetailInfo: Boolean;
     {*显示简明信息*}
+    FReportTitle: string;
+    {报表表头}
     FFullExpand: Boolean;
     {*全部展开*}
     function FrameTitle: string; override;
@@ -131,6 +133,7 @@ begin
          cxSplitter1.State := ssOpened
     else cxSplitter1.State := ssClosed;
 
+    FReportTitle := nIni.ReadString(Name, 'ReportTitle', '');
     nIni.Free;
   except
     nIni.Free;
@@ -384,17 +387,27 @@ end;
 
 //Desc: 打印
 procedure TfFrameNormal.BtnPrintClick(Sender: TObject);
+var nStr: string;
 begin
+  if FReportTitle = '' then
+       nStr := TitleBar.Caption
+  else nStr := FReportTitle;
+
   if SQLQuery.Active and (SQLQuery.RecordCount > 0) then
-       GridPrintData(cxGrid1, TitleBar.Caption)
+       GridPrintData(cxGrid1, nStr)
   else ShowMsg('没有可以打印的数据', sHint);
 end;
 
 //Desc: 预览
 procedure TfFrameNormal.BtnPreviewClick(Sender: TObject);
+var nStr: string;
 begin
+  if FReportTitle = '' then
+       nStr := TitleBar.Caption
+  else nStr := FReportTitle;
+
   if SQLQuery.Active and (SQLQuery.RecordCount > 0) then
-       GridPrintPreview(cxGrid1, TitleBar.Caption)
+       GridPrintPreview(cxGrid1, nStr)
   else ShowMsg('没有可以预览的数据', sHint);
 end;
 
