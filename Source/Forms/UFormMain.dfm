@@ -1,25 +1,25 @@
 object fMainForm: TfMainForm
-  Left = 272
-  Top = 226
-  Width = 602
-  Height = 428
+  Left = 666
+  Top = 341
+  Width = 638
+  Height = 454
   Color = clWhite
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
-  Font.Height = -15
+  Font.Height = -12
   Font.Name = #23435#20307
   Font.Style = []
   Menu = MainMenu1
   OldCreateOrder = False
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 120
-  TextHeight = 15
+  PixelsPerInch = 96
+  TextHeight = 12
   object HintPanel: TPanel
     Left = 0
     Top = 0
-    Width = 594
-    Height = 100
+    Width = 630
+    Height = 80
     Align = alTop
     BevelOuter = bvNone
     Ctl3D = True
@@ -28,8 +28,8 @@ object fMainForm: TfMainForm
     object Image1: TImage
       Left = 0
       Top = 0
-      Width = 373
-      Height = 100
+      Width = 409
+      Height = 80
       Align = alClient
       AutoSize = True
       Picture.Data = {
@@ -702,10 +702,10 @@ object fMainForm: TfMainForm
       OnDblClick = Image1DblClick
     end
     object Image2: TImage
-      Left = 373
+      Left = 409
       Top = 0
       Width = 221
-      Height = 100
+      Height = 80
       Align = alRight
       AutoSize = True
       Picture.Data = {
@@ -1307,14 +1307,14 @@ object fMainForm: TfMainForm
       OnDblClick = Image1DblClick
     end
     object HintLabel: TLabel
-      Left = 13
-      Top = 63
-      Width = 144
-      Height = 33
+      Left = 10
+      Top = 50
+      Width = 117
+      Height = 25
       Caption = 'HintLabel'
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWhite
-      Font.Height = -32
+      Font.Height = -25
       Font.Name = #23435#20307
       Font.Style = []
       ParentFont = False
@@ -1323,8 +1323,8 @@ object fMainForm: TfMainForm
   end
   object sBar: TStatusBar
     Left = 0
-    Top = 352
-    Width = 594
+    Top = 380
+    Width = 630
     Height = 20
     Panels = <
       item
@@ -1341,18 +1341,18 @@ object fMainForm: TfMainForm
       end>
   end
   object Splitter1: TcxSplitter
-    Left = 293
-    Top = 100
+    Left = 185
+    Top = 80
     Width = 8
-    Height = 252
+    Height = 300
     HotZoneClassName = 'TcxXPTaskBarStyle'
     Control = NavBar1
   end
   object NavBar1: TdxNavBar
     Left = 0
-    Top = 100
-    Width = 293
-    Height = 252
+    Top = 80
+    Width = 185
+    Height = 300
     Align = alLeft
     ActiveGroupIndex = 0
     TabOrder = 3
@@ -1377,10 +1377,10 @@ object fMainForm: TfMainForm
     end
   end
   object wPage: TcxPageControl
-    Left = 301
-    Top = 100
-    Width = 293
-    Height = 252
+    Left = 193
+    Top = 80
+    Width = 437
+    Height = 300
     ActivePage = Sheet1
     Align = alClient
     Images = FDM.Imagesmall
@@ -1391,9 +1391,9 @@ object fMainForm: TfMainForm
     TabSlants.Kind = skCutCorner
     OnChange = wPageChange
     OnPageChanging = wPagePageChanging
-    ClientRectBottom = 251
+    ClientRectBottom = 299
     ClientRectLeft = 1
-    ClientRectRight = 292
+    ClientRectRight = 436
     ClientRectTop = 22
     object Sheet1: TcxTabSheet
       Caption = #40664#35748#32972#26223
@@ -1401,8 +1401,8 @@ object fMainForm: TfMainForm
       object PanelBG: TZnBitmapPanel
         Left = 0
         Top = 0
-        Width = 291
-        Height = 229
+        Width = 435
+        Height = 277
         Align = alClient
       end
     end
