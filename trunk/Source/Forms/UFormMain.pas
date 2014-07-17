@@ -599,7 +599,7 @@ end;
 procedure TfMainForm.wPagePageChanging(Sender: TObject;
   NewPage: TcxTabSheet; var AllowChange: Boolean);
 begin
-  LockWindowUpdate(wPage.Handle);
+  LockWindowUpdate(Handle);
 end;
 
 procedure TfMainForm.wPageChange(Sender: TObject);
