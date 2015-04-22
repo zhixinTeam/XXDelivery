@@ -1323,7 +1323,7 @@ object fMainForm: TfMainForm
   end
   object sBar: TStatusBar
     Left = 0
-    Top = 380
+    Top = 387
     Width = 630
     Height = 20
     Panels = <
@@ -1344,7 +1344,7 @@ object fMainForm: TfMainForm
     Left = 185
     Top = 80
     Width = 8
-    Height = 300
+    Height = 307
     HotZoneClassName = 'TcxXPTaskBarStyle'
     Control = NavBar1
   end
@@ -1352,7 +1352,7 @@ object fMainForm: TfMainForm
     Left = 0
     Top = 80
     Width = 185
-    Height = 300
+    Height = 307
     Align = alLeft
     ActiveGroupIndex = 0
     TabOrder = 3
@@ -1380,7 +1380,7 @@ object fMainForm: TfMainForm
     Left = 193
     Top = 80
     Width = 437
-    Height = 300
+    Height = 307
     ActivePage = Sheet1
     Align = alClient
     Images = FDM.Imagesmall
@@ -1391,7 +1391,7 @@ object fMainForm: TfMainForm
     TabSlants.Kind = skCutCorner
     OnChange = wPageChange
     OnPageChanging = wPagePageChanging
-    ClientRectBottom = 299
+    ClientRectBottom = 306
     ClientRectLeft = 1
     ClientRectRight = 436
     ClientRectTop = 22
@@ -1402,7 +1402,7 @@ object fMainForm: TfMainForm
         Left = 0
         Top = 0
         Width = 435
-        Height = 277
+        Height = 284
         Align = alClient
       end
     end

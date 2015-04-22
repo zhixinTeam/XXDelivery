@@ -74,6 +74,7 @@ type
     procedure OnDestroyFrame; override;
     procedure OnLoadPopedom; override;
     {*基类函数*}
+    function FilterColumnField: string; virtual;
     procedure OnLoadGridConfig(const nIni: TIniFile); virtual;
     procedure OnSaveGridConfig(const nIni: TIniFile); virtual;
     {*表格配置*}
@@ -181,7 +182,7 @@ begin
 
   nIni := TIniFile.Create(gPath + sFormConfig);
   try
-    gSysEntityManager.BuildViewColumn(cxView1, PopedomItem);
+    gSysEntityManager.BuildViewColumn(cxView1, PopedomItem, FilterColumnField);
     //初始化表头
     InitTableView(Name, cxView1, nIni);
     //初始化风格和顺序
@@ -203,6 +204,11 @@ begin
 end;
 
 //------------------------------------------------------------------------------
+function TfFrameNormal.FilterColumnField: string;
+begin
+  Result := '';
+end;
+
 procedure TfFrameNormal.OnLoadGridConfig(const nIni: TIniFile);
 begin
 

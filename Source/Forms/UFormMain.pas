@@ -178,6 +178,9 @@ begin
 
     FTrayIcon := TTrayIcon.Create(Self);
     FTrayIcon.Visible := True;
+    {$IFDEF AppAtTaskBar}
+    FTrayIcon.Hide := False;
+    {$ENDIF}
 
     RunSystemObject;
     //run them

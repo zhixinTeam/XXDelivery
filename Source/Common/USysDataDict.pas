@@ -26,7 +26,8 @@ type
     procedure BuildFooterGroup(const nColumn: TcxGridColumn; const nItem: PDictItemData);
     {*合计分组*}
   public
-    function BuildViewColumn(const nView: TcxGridTableView; const nEntity: string): Boolean;
+    function BuildViewColumn(const nView: TcxGridTableView;
+     const nEntity: string; const nFilter: string = ''): Boolean;
     {*构建表头*}
   end;
 
@@ -77,13 +78,17 @@ end;
 //------------------------------------------------------------------------------
 //Desc: 依据nEntity构建nView的表头
 function TSysEntityManager.BuildViewColumn(const nView: TcxGridTableView;
-  const nEntity: string): Boolean;
+  const nEntity,nFilter: string): Boolean;
 var nList: TList;
+    nSList: TStrings;
     i,nCount: integer;
     nItem : PDictItemData;
     nColumn: TcxGridColumn;
 begin
   Result := False;
+  nSList := nil;
+  //init
+
   nView.BeginUpdate;
   try
     nView.ClearItems;
@@ -93,13 +98,23 @@ begin
     nList :=  ActiveEntity.FDictItem;
     if not Assigned(nList) then Exit;
 
+    if nFilter <> '' then
+    begin
+      nSList := TStringList.Create;
+      SplitStr(nFilter, nSList, 0);
+    end;
+
     nCount := nList.Count - 1;
     for i:=0 to nCount do
     begin
       nItem := nList[i];
       if not nItem.FVisible then Continue;
-      nColumn := nView.CreateColumn;
 
+      if Assigned(nSList) and (nSList.IndexOf(nItem.FDBItem.FField) >= 0) then
+        Continue;
+      //字段被过滤,不予显示
+
+      nColumn := nView.CreateColumn;
       nColumn.Tag := i;
       nColumn.Caption := nItem.FTitle;
       nColumn.Width := nItem.FWidth;
@@ -117,6 +132,7 @@ begin
 
     Result := True;
   finally
+    nSList.Free;
     nView.EndUpdate;
   end;
 end;
