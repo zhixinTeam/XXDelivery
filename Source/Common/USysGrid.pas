@@ -181,19 +181,22 @@ end;
 //Desc: 将nIndex应用到nView表格试图上
 procedure UserDefineViewIndex(const nIndex: string; const nView: TcxGridTableView);
 var nList: TStrings;
-    i,nCount,nIdx: integer;
+    i,j,nLen: integer;
 begin
   nList := TStringList.Create;
   try
     nList.Text := StringReplace(nIndex, ';', #13, [rfReplaceAll]);
     if nList.Count <> nView.ColumnCount then Exit;
-    nCount := nList.Count - 1;
+    nLen := nList.Count - 1;
 
-    for i:=0 to nCount do
-    begin
-      nIdx := nList.IndexOf(IntToStr(nView.Columns[i].Tag));
-      if nIdx > -1 then nView.Columns[i].Index := nIdx;
-    end;
+    for i:=0 to nLen do
+     for j:=0 to nLen do
+      if nView.Columns[j].Tag = StrToInt(nList[i]) then
+      begin
+        nView.Columns[j].Index := i;
+        Break;
+      end;
+    //xxxx
   finally
     nList.Free;
   end;
