@@ -472,7 +472,7 @@ end;
 //Desc: 打印标识为nHID的化验单
 function PrintHuaYanReport(const nBill: string; var nHint: string;
  const nPrinter: string = ''): Boolean;
-var nStr,nSR: string;
+var nStr,nSR,nType,nPack: string;
 begin
   nHint := '';
   Result := False;
@@ -483,6 +483,8 @@ begin
   with FDM.SQLQuery(nStr, FDM.SqlTemp) do
   if RecordCount > 0 then
   begin
+    nType := Fields[0].AsString;
+    nPack := Fields[1].AsString;
     if Fields[3].AsString <> sFlag_Yes then
     begin
       Result := True;
@@ -511,7 +513,7 @@ begin
          ' Left Join %s sp on sp.P_ID=sr.R_PID';
   nSR := Format(nSR, [sTable_StockRecord, sTable_StockParam]);
 
-  nStr := 'Select hy.*,sr.*,b.*,C_Name From $HY hy ' +
+  nStr := 'Select Top 1 hy.*,sr.*,b.*,C_Name From $HY hy ' +
           ' Left Join $Bill b On b.L_ID=hy.H_Bill ' +
           ' Left Join $Cus cus on cus.C_ID=hy.H_Custom' +
           ' Left Join ($SR) sr on sr.R_SerialNo=H_SerialNo ' +
@@ -521,7 +523,16 @@ begin
   nStr := MacroValue(nStr, [
           MI('$HY', sTable_StockHuaYan), MI('$Bill', sTable_Bill),
           MI('$Cus', sTable_Customer), MI('$SR', nSR), MI('$ID', nBill)]);
-  //xxxxx
+  //xxxxx如果袋装
+  if UpperCase(nType) = SFlag_Dai then
+  begin
+    nStr := nStr + ' and sr.R_Pack = ''%s'' Order By sr.R_ID Desc';
+    nStr := Format(nStr, [nPack]);
+  end
+  else
+  begin
+    nStr := nStr + ' Order By sr.R_ID Desc';
+  end;
 
   WriteLog('化验单查询:'+nStr);
 

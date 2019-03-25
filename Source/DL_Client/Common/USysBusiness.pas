@@ -1891,7 +1891,7 @@ begin
          ' Left Join %s sp on sp.P_ID=sr.R_PID';
   nSR := Format(nSR, [sTable_StockRecord, sTable_StockParam]);
 
-  nStr := 'Select hy.*,sr.*,sb.*,C_Name From $HY hy ' +
+  nStr := 'Select Top 1 hy.*,sr.*,sb.*,C_Name From $HY hy ' +
           ' Left Join $Cus cus on cus.C_ID=hy.H_Custom' +
           ' Left Join ($SR) sr on sr.R_SerialNo=H_SerialNo ' +
           ' Left Join $Bill sb on sb.L_ID=H_Bill ' +
@@ -1901,7 +1901,16 @@ begin
   nStr := MacroValue(nStr, [MI('$HY', sTable_StockHuaYan),
           MI('$Cus', sTable_Customer), MI('$SR', nSR),
           MI('$Bill', sTable_Bill),MI('$ID', nHID)]);
-  //xxxxx
+  //xxxxx如果袋装
+  if UpperCase(nType) = SFlag_Dai then
+  begin
+    nStr := nStr + ' and sr.R_Pack = ''%s'' Order By sr.R_ID Desc';
+    nStr := Format(nStr, [nPack]);
+  end
+  else
+  begin
+    nStr := nStr + ' Order By sr.R_ID Desc';
+  end;
 
   WriteLog('化验单查询SQL:' + nStr);
   if FDM.QueryTemp(nStr).RecordCount < 1 then
