@@ -392,6 +392,13 @@ begin
     end;
   end;
 
+  if not IsShuiNiInfo(nOrderItem.FGoodsID) then
+  begin
+    nMsg := '不是水泥类型,无法办卡';
+    ShowMsg(nMsg,sHint);
+    Exit;
+  end;
+
   EditValue.Text := nOrderItem.FData;
   EditTruck.Text := nOrderItem.Ftracknumber;
   EditPack.Text  := nOrderItem.FPackType;

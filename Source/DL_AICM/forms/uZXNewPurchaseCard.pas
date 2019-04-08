@@ -338,6 +338,13 @@ begin
     Exit;
   end;
 
+  if IsShuiNiInfo(nOrderItem.FGoodsID) then
+  begin
+    nMsg := '不是原材料类型,无法办卡';
+    ShowMsg(nMsg,sHint);
+    Exit;
+  end;
+
   //填充界面信息
   //基本信息
   EditID.Text := nOrderItem.Fpurchasecontract_no;
