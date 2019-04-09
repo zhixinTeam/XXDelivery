@@ -212,8 +212,12 @@ function SaveHYData(const nHYDan: string): Boolean;
 function PrintHuaYanReport(const nBill: string; var nHint: string;
  const nPrinter: string = ''): Boolean;
 //打印标识为nHID的化验单
-function IsShuiNiInfo(const nBill: string): Boolean;
+function IsShuiNiInfo(const nStockNo: string): Boolean;
 //判断是否是水泥品种
+function IFHasBill(const nTruck: string): Boolean;
+//车辆是否存在未完成提货单
+function IFHasOrder(const nTruck: string): Boolean;
+//车辆是否存在未完成采购单
 
 function CallBusinessCommand(const nCmd: Integer; const nData,nExt: string;
   const nOut: PWorkerBusinessCommand; const nWarn: Boolean = True): Boolean;
@@ -2020,7 +2024,7 @@ end;
 function PrintHuaYanReport(const nBill: string; var nHint: string;
  const nPrinter: string = ''): Boolean;
 var
-  nCount : Integer;
+  nCount, nL_HyPrintCount : Integer;
   nStr, nSR, nType, nPack : string;
 begin
   nHint := '';
@@ -2043,6 +2047,7 @@ begin
   begin
     nType := FieldByName('L_Type').AsString;
     nPack := FieldByName('L_Pack').AsString;
+    nL_HyPrintCount := FieldByName('L_HyPrintCount').AsInteger;
     nStr  := GetReportFileByStockEx(FieldByName('L_StockNo').AsString,
                                    FieldByName('L_Type').AsString,
                                    FieldByName('L_Pack').AsString);
@@ -2052,7 +2057,7 @@ begin
       nHint := '无法正确加载报表文件: ' + nStr;
       Exit;
     end;
-    if FieldByName('L_HyPrintCount').AsInteger >= nCount then
+    if nL_HyPrintCount >= nCount then
     begin
       nHint := '打印次数超出允许打印的最大次数，不允许打印 ';
       Exit;
@@ -2119,13 +2124,13 @@ begin
   end;
 end;
 
-function IsShuiNiInfo(const nBill: string): Boolean;
+function IsShuiNiInfo(const nStockNo: string): Boolean;
 var
   nStr : string;
 begin
   Result := False;
   nStr := 'Select D_Value From %s Where D_NAME = ''%s'' AND D_ParamB = ''%s'' ';
-  nStr := Format(nStr, [sTable_SysDict, sFlag_StockItem, nBill]);
+  nStr := Format(nStr, [sTable_SysDict, sFlag_StockItem, nStockNo]);
 
   with FDM.QueryTemp(nStr) do
   if RecordCount > 0 then
@@ -2135,6 +2140,36 @@ begin
   else
   begin
     Exit;
+  end;
+end;
+
+//车辆是否存在未完成提货单
+function IFHasBill(const nTruck: string): Boolean;
+var nStr: string;
+begin
+  Result := False;
+
+  nStr :='select L_ID from %s where L_Status <> ''%s'' and L_Truck =''%s'' ';
+  nStr := Format(nStr, [sTable_Bill, sFlag_TruckOut, nTruck]);
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    Result := True;
+  end;
+end;
+
+//车辆是否存在未完成采购单
+function IFHasOrder(const nTruck: string): Boolean;
+var nStr: string;
+begin
+  Result := False;
+
+  nStr :='select D_ID from %s where D_Status <> ''%s'' and D_Truck =''%s'' ';
+  nStr := Format(nStr, [sTable_OrderDtl, sFlag_TruckOut, nTruck]);
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    Result := True;
   end;
 end;
 

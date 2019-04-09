@@ -484,7 +484,11 @@ begin
     Writelog(nHint);
     Exit;
   end;
-
+  if IFHasOrder(EditTruck.Text) then
+  begin
+    ShowMsg('车辆存在未完成的采购单,无法开单,请联系管理员',sHint);
+    Exit;
+  end;
   if not VerifyCtrl(EditValue,nHint) then
   begin
     ShowMsg(nHint,sHint);
