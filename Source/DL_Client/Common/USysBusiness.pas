@@ -172,6 +172,8 @@ function ChangeDispatchMode(const nMode: Byte): Boolean;
 //切换调度模式
 function OpenDoorByReader(const nReader: string; nType: string = 'Y'): Boolean;
 //读卡器打开道闸
+function IFHasOrder(const nTruck: string): Boolean;
+//车辆是否存在未完成采购单
 
 function GetHYMaxValue: Double;
 function GetHYValueByStockNo(const nNo: string): Double;
@@ -1501,7 +1503,22 @@ begin
   Result := CallBusinessHardware(cBC_OpenDoorByReader, nReader, nType,
             @nOut, False);
   //xxxxx
-end;  
+end;
+
+//车辆是否存在未完成采购单
+function IFHasOrder(const nTruck: string): Boolean;
+var nStr: string;
+begin
+  Result := False;
+
+  nStr :='select D_ID from %s where D_Status <> ''%s'' and D_Truck =''%s'' ';
+  nStr := Format(nStr, [sTable_OrderDtl, sFlag_TruckOut, nTruck]);
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    Result := True;
+  end;
+end; 
 
 //------------------------------------------------------------------------------
 //Desc: 每批次最大量
