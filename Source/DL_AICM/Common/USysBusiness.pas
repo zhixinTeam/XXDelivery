@@ -218,7 +218,8 @@ function IFHasBill(const nTruck: string): Boolean;
 //车辆是否存在未完成提货单
 function IFHasOrder(const nTruck: string): Boolean;
 //车辆是否存在未完成采购单
-
+function IFHasOrderEx(const nTruck: string): Boolean;
+//车辆是否存在未完成采购单
 function CallBusinessCommand(const nCmd: Integer; const nData,nExt: string;
   const nOut: PWorkerBusinessCommand; const nWarn: Boolean = True): Boolean;
 function IsCardValid(const nCard: string): Boolean;
@@ -2166,6 +2167,21 @@ begin
 
   nStr :='select D_ID from %s where D_Status <> ''%s'' and D_Truck =''%s'' ';
   nStr := Format(nStr, [sTable_OrderDtl, sFlag_TruckOut, nTruck]);
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    Result := True;
+  end;
+end;
+
+//车辆是否存在未完成采购单
+function IFHasOrderEx(const nTruck: string): Boolean;
+var nStr: string;
+begin
+  Result      := False;
+  //采购主表有磁卡号
+  nStr :='select O_Card from %s where O_Truck =''%s'' and O_Card<> '''' and O_Card is not null ';
+  nStr := Format(nStr, [sTable_Order, nTruck]);
   with FDM.QueryTemp(nStr) do
   if RecordCount > 0 then
   begin

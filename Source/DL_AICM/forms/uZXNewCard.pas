@@ -252,6 +252,7 @@ begin
         FWebOrderItems[i].FCalYF := sFlag_Yes
       else
         FWebOrderItems[i].FCalYF := sFlag_No;
+      FWebOrderItems[i].FOrder_type := nListB.Values['order_type'];
       AddListViewItem(FWebOrderItems[i]);
     end;
   finally
@@ -332,12 +333,16 @@ end;
 procedure TfFormNewCard.LoadSingleOrder;
 var
   nOrderItem:stMallOrderItem;
-  nRepeat:Boolean;
+  nRepeat,IsShuiNi:Boolean;
   nWebOrderID,nType:string;
   nMsg,nStr:string;
 begin
   nOrderItem := FWebOrderItems[FWebOrderIndex];
   nWebOrderID := nOrderItem.FOrdernumber;
+  if UpperCase(Trim(nOrderItem.FOrder_type)) = 'S' then
+    IsShuiNi := True
+  else
+    IsShuiNi := False;
 
   FBegin := Now;
   nRepeat := IsRepeatCard(nWebOrderID);
@@ -392,7 +397,7 @@ begin
     end;
   end;
 
-  if not IsShuiNiInfo(nOrderItem.FGoodsID) then
+  if not IsShuiNi then
   begin
     nMsg := '不是水泥类型,无法办卡';
     ShowMsg(nMsg,sHint);
@@ -541,6 +546,12 @@ begin
   {$IFDEF SyncDataByWSDL}
   ReVerifySalePlanWSDL(nOrderItem.FYunTianOrderId, EditCus.Text, nHint);
   {$ENDIF}
+
+//  if IFHasBill(EditTruck.Text) then
+//  begin
+//    ShowMsg('车辆存在未完成的提货单,无法开单,请联系管理员',sHint);
+//    Exit;
+//  end;
 
   //保存提货单
   nStocks := TStringList.Create;

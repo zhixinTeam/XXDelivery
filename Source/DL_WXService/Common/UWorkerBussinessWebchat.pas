@@ -1158,6 +1158,9 @@ begin
         FListB.Values['order_id'] := nTmp.NodeByName('order_id').ValueAsString;
       end;
 
+      if Assigned(nTmp.NodeByName('order_type')) then
+        FListB.Values['order_type'] := nTmp.NodeByName('order_type').ValueAsString;
+
       if Assigned(nTmp.NodeByName('ordernumber')) then
         FListB.Values['ordernumber'] := nTmp.NodeByName('ordernumber').ValueAsString;
 

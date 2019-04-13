@@ -683,7 +683,7 @@ begin
   end;
 
   if (nBills[0].FType = sFlag_Dai) and (nBills[0].FNextStatus = sFlag_TruckBFM) and
-     (nBills[0].FHYDan = '') then
+     (nBills[0].FHYDan = '') and (nBills[0].FYSValid <> sFlag_Yes) then
   begin
     nVoice := '车辆 %s 不能过磅,请去录入批次';
     nVoice := Format(nVoice, [nBills[0].FTruck]);

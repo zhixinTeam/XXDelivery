@@ -244,6 +244,7 @@ const
   sFlag_TruckType     = 'TruckType';                 //车辆类型
   sFlag_TruckXzTotal  = 'TruckXzTotal';              //限载总控制
   sFlag_UPLS          = 'UnLodingPlaceLS';           //临时称重卸货地点
+  sFlag_AICMPrintCount= 'AICMPrintCount';            //自助机化验单最多打印次数
 
   sFlag_BusGroup      = 'BusFunction';               //业务编码组
   sFlag_BillNo        = 'Bus_Bill';                  //交货单号

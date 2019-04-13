@@ -1548,6 +1548,7 @@ begin
         FNextStatus := sFlag_TruckNone;
       end;
 
+      {$IFDEF TruckOutTimeOut}
       if (FType = sFlag_San) and
          (FStatus = sFlag_TruckBFM) and (FListA.IndexOf(FStockNo) >= 0) then//现场不发货
       begin
@@ -1561,7 +1562,9 @@ begin
         nStr := Format(nStr, [sTable_Bill, sFlag_TruckFH, sFlag_TruckBFM, FID]);
         FListB.Add(nStr);
         //散装过重后返回现场,更新记录状态
-      end else
+      end;
+      {$ENDIF}
+
       if (FIn.FExtParam = sFlag_TruckFH) and (FType = sFlag_San) and
          (FStatus = sFlag_TruckBFM) and (FListC.IndexOf(FStockNo) >= 0) then
       begin

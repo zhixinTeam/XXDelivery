@@ -477,7 +477,7 @@ begin
   nHint := '';
   Result := False;
 
-  nStr := 'Select L_Type, L_Pack, L_StockNo, L_PrintHY From %s Where L_ID = ''%s'' ';
+  nStr := 'Select L_Type, L_Pack, L_StockNo, L_PrintHY, L_TruckEmpty From %s Where L_ID = ''%s'' ';
   nStr := Format(nStr, [sTable_Bill, nBill]);
 
   with FDM.SQLQuery(nStr, FDM.SqlTemp) do
@@ -485,6 +485,13 @@ begin
   begin
     nType := Fields[0].AsString;
     nPack := Fields[1].AsString;
+    if UpperCase(Fields[4].AsString) = sFlag_Yes then
+    begin
+      Result := True;
+      nHint := '空车出厂[ %s ]无需打印化验单';
+      nHint := Format(nHint, [nBill]);
+      Exit;
+    end;
     if Fields[3].AsString <> sFlag_Yes then
     begin
       Result := True;

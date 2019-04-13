@@ -295,6 +295,7 @@ begin
       FWebOrderItems[i].FGoodsname := nListB.Values['goodsname'];
       FWebOrderItems[i].FData := nListB.Values['data'];
       FWebOrderItems[i].Ftracknumber := nListB.Values['tracknumber'];
+      FWebOrderItems[i].FOrder_type  := nListB.Values['order_type'];
       AddListViewItem(FWebOrderItems[i]);
     end;
   finally
@@ -321,12 +322,16 @@ end;
 procedure TfFormNewPurchaseCard.LoadSingleOrder;
 var
   nOrderItem:stMallPurchaseItem;
-  nRepeat:Boolean;
+  nRepeat, IsPurchaseCard :Boolean;
   nWebOrderID,nModel,nYear,nKD,nProName,nStockName:string;
   nMsg:string;
 begin
   nOrderItem := FWebOrderItems[FWebOrderIndex];
   nWebOrderID := nOrderItem.FOrder_id;
+  if UpperCase(Trim(nOrderItem.FOrder_type))  = 'P' then
+    IsPurchaseCard := True
+  else
+    IsPurchaseCard := False;
   FBegin := now;
   nRepeat := IsRepeatCard(nWebOrderID);
 
@@ -338,7 +343,7 @@ begin
     Exit;
   end;
 
-  if IsShuiNiInfo(nOrderItem.FGoodsID) then
+  if not IsPurchaseCard then
   begin
     nMsg := '不是原材料类型,无法办卡';
     ShowMsg(nMsg,sHint);
@@ -484,11 +489,19 @@ begin
     Writelog(nHint);
     Exit;
   end;
+
+  if IFHasOrderEx(EditTruck.Text) then
+  begin
+    ShowMsg('车辆存在未完成的采购单,无法开单,请联系管理员',sHint);
+    Exit;
+  end;
+
   if IFHasOrder(EditTruck.Text) then
   begin
     ShowMsg('车辆存在未完成的采购单,无法开单,请联系管理员',sHint);
     Exit;
   end;
+  
   if not VerifyCtrl(EditValue,nHint) then
   begin
     ShowMsg(nHint,sHint);

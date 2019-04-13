@@ -274,6 +274,7 @@ type
     FYunTianOrderId:string;//云天系统订单号
     FPackType:string;
     FCalYF:string;
+    FOrder_type:string;
   end;
   //网上商城订单明细
 
@@ -287,6 +288,7 @@ type
     FData:string; //数量
     Ftracknumber:string; //车牌号
     Fpurchasecontract_no:string;//合同编号
+    FOrder_type:string; //订单类型：P:采购；S：销售
   end;
   //网上商城供货单明细
 
