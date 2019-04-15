@@ -533,7 +533,7 @@ begin
   //xxxxxÈç¹û´ü×°
   if UpperCase(nType) = SFlag_Dai then
   begin
-    nStr := nStr + ' and sr.R_Pack = ''%s'' Order By sr.R_ID Desc';
+    nStr := nStr + ' and sr.R_Pack = ''%s'' and b.L_StockName=sr.R_PID Order By sr.R_ID Desc';
     nStr := Format(nStr, [nPack]);
   end
   else
