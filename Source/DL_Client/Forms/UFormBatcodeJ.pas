@@ -70,6 +70,8 @@ type
     dxLayout1Item23: TdxLayoutItem;
     ListQuery: TcxListView;
     dxLayout1Group13: TdxLayoutGroup;
+    EditBatCode: TcxTextEdit;
+    dxlytmLayout1Item24: TdxLayoutItem;
     procedure BtnOKClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure EditStockPropertiesEditValueChanged(Sender: TObject);
@@ -201,6 +203,7 @@ begin
       EditLow.Text := FieldByName('B_Low').AsString;
       EditHigh.Text := FieldByName('B_High').AsString;
       EditWeek.Text := FieldByName('B_Interval').AsString;
+      EditBatCode.Text := FieldByName('B_Batcode').AsString;
       Check2.Checked := FieldByName('B_AutoNew').AsString = sFlag_Yes;
 
       for nIdx := 0 to EditCusList.Properties.Items.Count - 1 do
@@ -276,7 +279,12 @@ begin
   if Sender = EditLen then
   begin
     Result := IsNumber(EditLen.Text, False);
-    nHint := '请输入长度';
+    nHint  := '请输入长度';
+    if Result then
+    begin
+      Result := StrToIntDef(EditLen.Text, 0) > Length(Trim(EditPrefix.Text));
+      nHint := '编号长度需要大于编号前缀长度';
+    end;
   end else
 
   if Sender = EditValue then
@@ -340,6 +348,7 @@ begin
           SF('B_Low', EditLow.Text, sfVal),
           SF('B_High', EditHigh.Text, sfVal),
           SF('B_Interval', EditWeek.Text, sfVal),
+          SF('B_Batcode', EditBatCode.Text),
           SF('B_AutoNew', nN),
           SF('B_Customer', FCusList),
           SF('B_LastDate', sField_SQLServer_Now, sfVal)

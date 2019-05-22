@@ -223,6 +223,8 @@ const
   sFlag_MaterailsItem = 'MaterailsItem';             //原材料信息项
   sFlag_SaleOrderItem = 'SaleOrderItem';             //销售订单信息项
 
+  sFlag_GPS           = 'GPS';                       //校验GPS
+
   sFlag_HardSrvURL    = 'HardMonURL';
   sFlag_MITSrvURL     = 'MITServiceURL';
   sFlag_WechatSrvURL  = 'WXServiceURL';              //服务地址

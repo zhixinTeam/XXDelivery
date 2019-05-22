@@ -410,6 +410,14 @@ begin
     Exit;
   end;
 
+  if not CheckGPSInfo(gBillItem.FStockNo,EditTruck.Text) then
+  begin
+    nStr := '车辆[ %s ]GPS未交费,需先处理.';
+    nStr := Format(nStr, [EditTruck.Text]);
+    ShowMsg(nStr,sHint);
+    Exit;
+  end;
+  
   nStocks := TStringList.Create;
   nList := TStringList.Create;
   try

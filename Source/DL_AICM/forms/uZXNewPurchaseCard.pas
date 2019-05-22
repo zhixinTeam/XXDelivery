@@ -676,6 +676,8 @@ begin
   if Key=Char(vk_return) then
   begin
     key := #0;
+    if btnQuery.CanFocus then
+      btnQuery.SetFocus;
     btnQuery.Click;
   end;
 end;

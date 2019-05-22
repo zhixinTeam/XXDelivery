@@ -216,6 +216,8 @@ function IsShuiNiInfo(const nStockNo: string): Boolean;
 //判断是否是水泥品种
 function IFHasBill(const nTruck: string): Boolean;
 //车辆是否存在未完成提货单
+function CheckGPSInfo(const nStockNo : string; const nTruck : string): Boolean;
+//校验GPS是否允许通行
 function IFHasOrder(const nTruck: string): Boolean;
 //车辆是否存在未完成采购单
 function IFHasOrderEx(const nTruck: string): Boolean;
@@ -2156,6 +2158,42 @@ begin
   if RecordCount > 0 then
   begin
     Result := True;
+  end;
+end;
+
+//Desc: 校验GPS是否允许通行
+function CheckGPSInfo(const nStockNo : string; const nTruck : string): Boolean;
+var nStr: string;
+begin
+  Result := True;
+
+  nStr := 'Select D_Value From %s Where D_Name=''%s'' and D_Memo=''%s'' ';
+  nStr := Format(nStr, [sTable_SysDict, sFlag_GPS, nStockNo]);
+
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    if Trim(Fields[0].AsString) <> sFlag_Yes then
+    begin
+      Exit;
+    end;
+  end
+  else
+    Exit;
+
+  nStr := 'Select T_HasGPS, isnull(T_GPSDate,''1999-12-12 12:00:00'') T_GPSDate From %s Where T_Truck = ''%s'' ';
+  nStr := Format(nStr, [sTable_Truck,  nTruck]);
+
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    if (Trim(Fields[0].AsString) = sFlag_Yes) and
+       (Fields[1].AsDateTime > Str2Date('2000-01-01')) and
+       (Fields[1].AsDateTime > Now())
+    then
+      Result := True
+    else
+      Result := False;
   end;
 end;
 

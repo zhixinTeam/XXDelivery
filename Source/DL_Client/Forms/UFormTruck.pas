@@ -11,7 +11,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   UFormBase, UFormNormal, cxGraphics, cxControls, cxLookAndFeels,
   cxLookAndFeelPainters, cxContainer, cxEdit, cxMaskEdit, cxDropDownEdit,
-  cxTextEdit, dxLayoutControl, StdCtrls, cxCheckBox;
+  cxTextEdit, dxLayoutControl, StdCtrls, cxCheckBox, cxCalendar;
 
 type
   TfFormTruck = class(TfFormNormal)
@@ -41,6 +41,8 @@ type
     dxLayout1Item12: TdxLayoutItem;
     EditType: TcxComboBox;
     dxLayout1Item13: TdxLayoutItem;
+    dxLayout1Item14: TdxLayoutItem;
+    EditDate: TcxDateEdit;
     procedure BtnOKClick(Sender: TObject);
   protected
     { Protected declarations }
@@ -74,6 +76,7 @@ begin
     begin
       Caption := '³µÁ¾ - Ìí¼Ó';
       FTruckID := '';
+      EditDate.Date := Now;
     end;
 
     if nP.FCommand = cCmd_EditData then
@@ -148,6 +151,7 @@ begin
     nStr := FieldByName('T_TruckType').AsString;
     SetCtrlData(EditType, nStr);
     EditMaxXz.Text := FieldByName('T_MaxXz').AsString;
+    EditDate.Date  := Str2DateTime(FieldByName('T_GPSDate').AsString);
   end;
 end;
 
@@ -199,6 +203,7 @@ begin
           SF('T_PrePUse', nP),
           SF('T_VIPTruck', nVip),
           SF('T_HasGPS', nGps),
+          SF('T_GPSDate', DateTime2Str(EditDate.Date)),
           SF('T_PrePValue', nVal, sfVal),
           SF('T_TruckType', EditType.Text),
           SF('T_MaxXz', nValMaxXz, sfVal),

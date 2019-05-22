@@ -175,6 +175,7 @@ inherited fFormBill: TfFormBill
       Left = 81
       Top = 503
       AutoSize = False
+      ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       TabOrder = 19
       Height = 20
@@ -183,6 +184,7 @@ inherited fFormBill: TfFormBill
     object EditHYDan: TcxComboBox [17]
       Left = 289
       Top = 503
+      ParentFont = False
       Properties.DropDownListStyle = lsEditFixedList
       TabOrder = 20
       Width = 191

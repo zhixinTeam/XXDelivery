@@ -547,11 +547,17 @@ begin
   ReVerifySalePlanWSDL(nOrderItem.FYunTianOrderId, EditCus.Text, nHint);
   {$ENDIF}
 
-//  if IFHasBill(EditTruck.Text) then
-//  begin
-//    ShowMsg('车辆存在未完成的提货单,无法开单,请联系管理员',sHint);
-//    Exit;
-//  end;
+  if IFHasBill(EditTruck.Text) then
+  begin
+    ShowMsg('车辆存在未完成的提货单,无法开单,请联系管理员',sHint);
+    Exit;
+  end;
+
+  if not CheckGPSInfo(EditStock.Text,EditTruck.Text) then
+  begin
+    ShowMsg('车辆GPS未交费,无法开单,请联系管理员',sHint);
+    Exit;
+  end;
 
   //保存提货单
   nStocks := TStringList.Create;
@@ -688,6 +694,8 @@ begin
   if Key=Char(vk_return) then
   begin
     key := #0;
+    if btnQuery.CanFocus then
+      btnQuery.SetFocus;
     btnQuery.Click;
   end;
 end;

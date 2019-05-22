@@ -316,6 +316,8 @@ function IsTruckTimeOut(const nLID: string): Boolean;
 //验证车辆是否出厂超时
 function GetEventDept: string;
 //获取过磅事件推送部门
+function CheckGPSInfo(const nStockNo : string; const nTruck : string): Boolean;
+//校验GPS是否允许通行
 
 //=====================================================================
 function SyncPProviderWSDL(const nProID: string): Boolean;
@@ -2981,6 +2983,42 @@ begin
       end;
       Next;
     end;
+  end;
+end;
+
+//Desc: 校验GPS是否允许通行
+function CheckGPSInfo(const nStockNo : string; const nTruck : string): Boolean;
+var nStr: string;
+begin
+  Result := True;
+
+  nStr := 'Select D_Value From %s Where D_Name=''%s'' and D_Memo=''%s'' ';
+  nStr := Format(nStr, [sTable_SysDict, sFlag_GPS, nStockNo]);
+
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    if Trim(Fields[0].AsString) <> sFlag_Yes then
+    begin
+      Exit;
+    end;
+  end
+  else
+    Exit;
+
+  nStr := 'Select T_HasGPS, isnull(T_GPSDate,''1999-12-12 12:00:00'') T_GPSDate From %s Where T_Truck = ''%s'' ';
+  nStr := Format(nStr, [sTable_Truck,  nTruck]);
+
+  with FDM.QueryTemp(nStr) do
+  if RecordCount > 0 then
+  begin
+    if (Trim(Fields[0].AsString) = sFlag_Yes) and
+       (Fields[1].AsDateTime > Str2Date('2000-01-01')) and
+       (Fields[1].AsDateTime > Now())
+    then
+      Result := True
+    else
+      Result := False;
   end;
 end;
 
