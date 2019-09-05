@@ -21,6 +21,24 @@ inherited fFormCustomer: TfFormCustomer
     TabStop = False
     AutoContentSizes = [acsWidth, acsHeight]
     LookAndFeel = FDM.dxLayoutWeb1
+    object lbl1: TLabel
+      Left = 178
+      Top = 236
+      Width = 54
+      Height = 12
+      Caption = #36710'/'#22825'    '
+      Color = clWindow
+      ParentColor = False
+    end
+    object lbl2: TLabel
+      Left = 400
+      Top = 236
+      Width = 30
+      Height = 12
+      Caption = #21544'/'#22825
+      Color = clWindow
+      ParentColor = False
+    end
     object EditName: TcxTextEdit
       Left = 81
       Top = 36
@@ -41,19 +59,19 @@ inherited fFormCustomer: TfFormCustomer
     end
     object EditMemo: TcxMemo
       Left = 81
-      Top = 236
+      Top = 261
       Hint = 'T.C_Memo'
       ParentFont = False
       Properties.MaxLength = 50
       Properties.ScrollBars = ssVertical
       Style.Edges = [bBottom]
-      TabOrder = 13
+      TabOrder = 15
       Height = 45
       Width = 385
     end
     object InfoList1: TcxMCListBox
       Left = 23
-      Top = 368
+      Top = 393
       Width = 438
       Height = 131
       HeaderSections = <
@@ -69,44 +87,44 @@ inherited fFormCustomer: TfFormCustomer
       ParentFont = False
       Style.BorderStyle = cbsOffice11
       Style.Edges = [bLeft, bTop, bRight, bBottom]
-      TabOrder = 18
+      TabOrder = 20
     end
     object InfoItems: TcxComboBox
       Left = 81
-      Top = 318
+      Top = 343
       ParentFont = False
       Properties.DropDownRows = 15
       Properties.ImmediateDropDown = False
       Properties.IncrementalSearch = False
       Properties.ItemHeight = 20
       Properties.MaxLength = 30
-      TabOrder = 14
+      TabOrder = 16
       Width = 100
     end
     object EditInfo: TcxTextEdit
       Left = 81
-      Top = 343
+      Top = 368
       ParentFont = False
       Properties.MaxLength = 50
-      TabOrder = 16
+      TabOrder = 18
       Width = 120
     end
     object BtnAdd: TButton
       Left = 411
-      Top = 318
+      Top = 343
       Width = 46
       Height = 18
       Caption = #28155#21152
-      TabOrder = 15
+      TabOrder = 17
       OnClick = BtnAddClick
     end
     object BtnDel: TButton
       Left = 412
-      Top = 343
+      Top = 368
       Width = 45
       Height = 17
       Caption = #21024#38500
-      TabOrder = 17
+      TabOrder = 19
       OnClick = BtnDelClick
     end
     object BtnOK: TButton
@@ -115,7 +133,7 @@ inherited fFormCustomer: TfFormCustomer
       Width = 70
       Height = 22
       Caption = #20445#23384
-      TabOrder = 20
+      TabOrder = 22
       OnClick = BtnOKClick
     end
     object BtnExit: TButton
@@ -124,7 +142,7 @@ inherited fFormCustomer: TfFormCustomer
       Width = 70
       Height = 22
       Caption = #21462#28040
-      TabOrder = 21
+      TabOrder = 23
       OnClick = BtnExitClick
     end
     object cxTextEdit1: TcxTextEdit
@@ -235,7 +253,7 @@ inherited fFormCustomer: TfFormCustomer
       Hint = 'T.C_XuNi'
       Caption = #38750#27491#24335#23458#25143': '#27491#24120#26597#35810#26102#19981#20104#26174#31034'.'
       ParentFont = False
-      TabOrder = 19
+      TabOrder = 21
       Transparent = True
       Width = 218
     end
@@ -250,6 +268,24 @@ inherited fFormCustomer: TfFormCustomer
       Properties.ItemHeight = 20
       TabOrder = 12
       Width = 121
+    end
+    object edt_1: TcxTextEdit
+      Left = 295
+      Top = 236
+      Hint = 'T.C_MaxValue'
+      ParentFont = False
+      Properties.MaxLength = 18
+      TabOrder = 14
+      Width = 100
+    end
+    object edt_11: TcxTextEdit
+      Left = 81
+      Top = 236
+      Hint = 'T.C_MaxNum'
+      ParentFont = False
+      Properties.MaxLength = 18
+      TabOrder = 13
+      Width = 92
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       ShowCaption = False
@@ -373,6 +409,35 @@ inherited fFormCustomer: TfFormCustomer
           object dxLayoutControl1Item22: TdxLayoutItem
             Caption = #24494#20449#36134#21495':'
             Control = EditWX
+            ControlOptions.ShowBorder = False
+          end
+        end
+        object dxLayoutControl1Group9: TdxLayoutGroup
+          ShowCaption = False
+          Hidden = True
+          LayoutDirection = ldHorizontal
+          ShowBorder = False
+          object dxlytmLayoutControl1Item231: TdxLayoutItem
+            Caption = #25955#35013#38480#37327':'
+            Control = edt_11
+            ControlOptions.ShowBorder = False
+          end
+          object dxlytmLayoutControl1Item232: TdxLayoutItem
+            ShowCaption = False
+            Control = lbl1
+            ControlOptions.AutoColor = True
+            ControlOptions.ShowBorder = False
+          end
+          object dxlytmLayoutControl1Item23: TdxLayoutItem
+            Caption = #34955#35013#38480#37327':'
+            Control = edt_1
+            ControlOptions.ShowBorder = False
+          end
+          object dxlytmLayoutControl1Item233: TdxLayoutItem
+            AutoAligns = [aaVertical]
+            ShowCaption = False
+            Control = lbl2
+            ControlOptions.AutoColor = True
             ControlOptions.ShowBorder = False
           end
         end

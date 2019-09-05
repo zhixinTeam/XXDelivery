@@ -11,7 +11,7 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
   cxContainer, cxEdit, cxLabel, ExtCtrls, CPort, StdCtrls, Buttons,
-  UHotKeyManager,uReadCardThread;
+  UHotKeyManager,uReadCardThread, dxSkinsCore, dxSkinsDefaultPainters;
 
 type
   TCardType = (ctTTCE,ctRFID);

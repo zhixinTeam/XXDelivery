@@ -12,7 +12,7 @@ uses
   UDataModule, UFormBase, cxGraphics, cxControls, cxLookAndFeels,
   cxLookAndFeelPainters, cxContainer, cxEdit, dxLayoutControl, cxCheckBox,
   cxLabel, StdCtrls, cxMaskEdit, cxDropDownEdit, cxMCListBox, cxMemo,
-  cxTextEdit;
+  cxTextEdit, dxSkinsCore, dxSkinsDefaultPainters, dxSkinsdxLCPainter;
 
 type
   TfFormCustomer = class(TBaseForm)
@@ -75,6 +75,15 @@ type
     EditWX: TcxComboBox;
     dxLayoutControl1Item22: TdxLayoutItem;
     dxLayoutControl1Group14: TdxLayoutGroup;
+    dxlytmLayoutControl1Item23: TdxLayoutItem;
+    edt_1: TcxTextEdit;
+    dxlytmLayoutControl1Item231: TdxLayoutItem;
+    edt_11: TcxTextEdit;
+    dxLayoutControl1Group9: TdxLayoutGroup;
+    dxlytmLayoutControl1Item232: TdxLayoutItem;
+    lbl1: TLabel;
+    dxlytmLayoutControl1Item233: TdxLayoutItem;
+    lbl2: TLabel;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnAddClick(Sender: TObject);
@@ -382,7 +391,21 @@ begin
   try
     FDM.ExecuteSQL(nSQL);
     //insert data
-    
+
+    if Trim(edt_1.Text)='' then
+    begin
+      nSQL := 'UPDate %s Set C_MaxValue=Null Where C_ID=''' + FCustomerID + '''';
+      nSQL := Format(nSQL, [sTable_Customer]);
+      FDM.ExecuteSQL(nSQL);
+    end;
+
+    if Trim(edt_11.Text)='' then
+    begin
+      nSQL := 'UPDate %s Set C_MaxNum=Null Where C_ID=''' + FCustomerID + '''';
+      nSQL := Format(nSQL, [sTable_Customer]);
+      FDM.ExecuteSQL(nSQL);
+    end;
+
     if FCustomerID <> '' then
     begin
       nSQL := 'Delete From %s Where I_Group=''%s'' and I_ItemID=''%s''';

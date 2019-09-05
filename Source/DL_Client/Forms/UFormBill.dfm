@@ -1,6 +1,6 @@
 inherited fFormBill: TfFormBill
-  Left = 448
-  Top = 32
+  Left = 449
+  Top = 103
   ClientHeight = 568
   ClientWidth = 507
   Position = poDesktopCenter

@@ -11,7 +11,7 @@ uses
   UDataModule, UFormBase, cxGraphics, dxLayoutControl, StdCtrls,
   cxMaskEdit, cxDropDownEdit, cxMCListBox, cxMemo, cxContainer, cxEdit,
   cxTextEdit, cxControls, cxLookAndFeels, cxLookAndFeelPainters,
-  dxSkinsCore, dxSkinsDefaultPainters;
+  dxSkinsCore, dxSkinsDefaultPainters, dxSkinsdxLCPainter;
 
 type
   TfFormProvider = class(TBaseForm)
@@ -46,6 +46,11 @@ type
     dxLayoutControl1Group3: TdxLayoutGroup;
     dxLayoutControl1Item3: TdxLayoutItem;
     EditID: TcxTextEdit;
+    dxlytmLayoutControl1Item1: TdxLayoutItem;
+    edt_11: TcxTextEdit;
+    dxlytmLayoutControl1Item11: TdxLayoutItem;
+    lbl1: TLabel;
+    dxLayoutControl1Group6: TdxLayoutGroup;
     procedure FormCreate(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure BtnAddClick(Sender: TObject);
@@ -319,7 +324,14 @@ begin
 
     FreeAndNil(nList);
     FDM.ExecuteSQL(nSQL);
-    
+
+    if Trim(edt_11.Text)='' then
+    begin
+      nSQL := 'UPDate %s Set P_MaxNum=Null Where P_ID=''' + FRecordID + '''';
+      nSQL := Format(nSQL, [sTable_Provider]);
+      FDM.ExecuteSQL(nSQL);
+    end;
+
     if FRecordID = '' then
     begin
       nID := EditID.Text;

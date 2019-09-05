@@ -14,7 +14,8 @@ uses
   XPMan, dxLayoutLookAndFeels, cxEdit, ImgList, Controls, cxGraphics, DB,
   ADODB, dxBkgnd, cxDrawTextUtils,
   dxPSPrVwStd, dxPScxEditorProducers, dxPScxExtEditorProducers,
-  dxPScxPageControlProducer;
+  dxPScxPageControlProducer, dxPSPDFExportCore, dxPSPDFExport, dxSkinsCore,
+  dxSkinscxPCPainter, dxSkinsDefaultPainters;
 
 type
   TFDM = class(TDataModule)

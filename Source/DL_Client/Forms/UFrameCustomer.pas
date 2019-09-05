@@ -15,7 +15,8 @@ uses
   cxTextEdit, cxMaskEdit, cxButtonEdit, ADODB, cxLabel, UBitmapPanel,
   cxSplitter, cxGridLevel, cxClasses, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
-  ComCtrls, ToolWin;
+  ComCtrls, ToolWin, dxSkinsCore, dxSkinsDefaultPainters,
+  dxSkinscxPCPainter, dxSkinsdxLCPainter;
 
 type
   TfFrameCustomer = class(TfFrameNormal)
@@ -277,9 +278,9 @@ end;
 //------------------------------------------------------------------------------
 //Desc: 关联商城账户
 procedure TfFrameCustomer.N6Click(Sender: TObject);
-var nStr:string;
+var nStr,nMsg:string;
     nP: TFormCommandParam;
-    nID,nName,nBindID,nAccount:string;
+    nID,nName,nBindID,nAccount,nPhone:string;
 begin
   if cxView1.DataController.GetSelectedCount < 1 then
   begin
@@ -300,6 +301,7 @@ begin
 
   nBindID  := nP.FParamB;
   nAccount := nP.FParamC;
+  nPhone   := nP.FParamD;
   nID      := SQLQuery.FieldByName('C_ID').AsString;
   nName    := SQLQuery.FieldByName('C_Name').AsString;
 
@@ -311,13 +313,21 @@ begin
     Values['Account']  := nAccount;
     Values['CusID']    := nID;
     Values['CusName']  := nName;
+    Values['Memo']     := sFlag_Sale;
+    Values['Phone']    := nPhone;
+    Values['btype']    := '1';
   end;
 
-  if edit_shopclients(PackerEncodeStr(FListA.Text)) <> sFlag_Yes then Exit;
+  nMsg := edit_shopclients(PackerEncodeStr(FListA.Text));
+  if nMsg <> sFlag_Yes then
+  begin
+     ShowMsg('关联商城账户失败：'+nMsg,sHint);
+     Exit;
+  end;
   //call remote
 
-  nStr := 'update %s set C_WeiXin=''%s'' where C_ID=''%s''';
-  nStr := Format(nStr,[sTable_Customer, nAccount, nID]);
+  nStr := 'update %s set C_WeiXin=''%s'',C_Phone=''%s'',C_custSerilaNo=''%s'' where C_ID=''%s''';
+  nStr := Format(nStr,[sTable_Customer, nAccount, nPhone, nBindID, nID]);
   FDM.ExecuteSQL(nStr);
 
   ShowMsg('关联商城账户成功',sHint);
@@ -326,8 +336,8 @@ end;
 
 //Desc: 取消关联商城账户
 procedure TfFrameCustomer.N7Click(Sender: TObject);
-var nStr:string;
-    nID,nName,nAccount:string;
+var nStr,nMsg:string;
+    nID,nName,nAccount,nPhone,nBindID:string;
 begin
   if cxView1.DataController.GetSelectedCount < 1 then
   begin
@@ -338,6 +348,8 @@ begin
   nAccount := SQLQuery.FieldByName('C_WeiXin').AsString;
   nID := SQLQuery.FieldByName('C_ID').AsString;
   nName := SQLQuery.FieldByName('C_Name').AsString;
+  nPhone   := SQLQuery.FieldByName('C_Phone').AsString;
+  nBindID  := SQLQuery.FieldByName('C_custSerilaNo').AsString;
 
   with FListA do
   begin
@@ -346,16 +358,23 @@ begin
     Values['Account']  := nAccount;
     Values['CusID']    := nID;
     Values['CusName']  := nName;
+    Values['Memo']     := sFlag_Sale;
+    Values['Phone']    := nPhone;
+    Values['BindID']   := nBindID;
+    Values['btype']    := '1';
   end;
-
-  if edit_shopclients(PackerEncodeStr(FListA.Text)) <> sFlag_Yes then Exit;
+  nMsg := edit_shopclients(PackerEncodeStr(FListA.Text));
+  if nMsg <> sFlag_Yes then
+  begin
+     ShowMsg('取消关联商城账户失败：'+nMsg,sHint);
+     Exit;
+  end;
   //call remote
 
-  nStr := 'update %s set C_WeiXin=Null where C_ID=''%s''';
+  nStr := 'update %s set C_WeiXin=Null,C_Phone=Null, C_custSerilaNo= Null where C_ID=''%s''';
   nStr := Format(nStr,[sTable_Customer, nID]);
   FDM.ExecuteSQL(nStr);
 
-  InitFormData(FWhere);
   ShowMsg('取消商城关联成功！', sHint);
 end;
 

@@ -139,5 +139,9 @@
   //定置装车
   {$DEFINE SanLed}
   //散装网口小屏(新驱动)
+  {$DEFINE WXCreateOrderCtrl}
+  //限量控制
+  {$DEFINE UseWXServiceEx}
+  //使用微信二期
 {$ENDIF}
 

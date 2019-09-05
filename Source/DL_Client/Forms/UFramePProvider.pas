@@ -15,7 +15,7 @@ uses
   cxSplitter, cxGridLevel, cxClasses, cxControls, cxGridCustomView,
   cxGridCustomTableView, cxGridTableView, cxGridDBTableView, cxGrid,
   ComCtrls, ToolWin, cxLookAndFeels, cxLookAndFeelPainters, dxSkinsCore,
-  dxSkinsDefaultPainters, Menus;
+  dxSkinsDefaultPainters, Menus, dxSkinscxPCPainter, dxSkinsdxLCPainter;
 
 type
   TfFrameProvider = class(TfFrameNormal)
@@ -180,9 +180,8 @@ end;
 
 procedure TfFrameProvider.N2Click(Sender: TObject);
 var
-  nWechartAccount:string;
+  nPID,nPName,nWechartAccount,nPhone,nMsg:string;
   nParam: TFormCommandParam;
-  nPID,nPName:string;
   nBindcustomerid:string;
   nStr:string;
 begin
@@ -216,12 +215,20 @@ begin
     Values['CusID']    := nPID;
     Values['CusName']  := nPName;
     Values['Memo']     := sFlag_Provide;
+    Values['Phone']    := nPhone;
+    Values['btype']    := '2';
+  end;
+  nMsg := edit_shopclients(PackerEncodeStr(FListA.Text));
+  if nMsg <> sFlag_Yes then
+  begin
+     ShowMsg('关联商城账户失败：'+nMsg,sHint);
+     Exit;
   end;
 
-  if edit_shopclients(PackerEncodeStr(FListA.Text)) <> sFlag_Yes then Exit;
   //call remote
-  nStr := 'update %s set P_WechartAccount=''%s'' where P_ID=''%s''';
-  nStr := Format(nStr,[sTable_Provider,nWechartAccount,nPID]);
+  nStr := 'update %s set P_WechartAccount=''%s'',P_Phone=''%s'',P_custSerialNo=''%s'' where P_ID=''%s''';
+  nStr := Format(nStr,[sTable_Provider,nWechartAccount, nPhone, nBindcustomerid, nPID]);
+
   FDM.ADOConn.BeginTrans;
   try
     FDM.ExecuteSQL(nStr);
@@ -236,10 +243,8 @@ end;
 
 procedure TfFrameProvider.N3Click(Sender: TObject);
 var
-  nWechartAccount:string;
-  nPID:string;
-  nStr:string;
-  nPName:string;
+  nPID,nPName,nWechartAccount, nPhone,nBindID:string;
+  nStr,nMsg:string;
 begin
   if cxView1.DataController.GetSelectedCount < 1 then
   begin
@@ -255,6 +260,8 @@ begin
 
   nPID := SQLQuery.FieldByName('P_ID').AsString;
   nPName := SQLQuery.FieldByName('P_Name').AsString;
+  nPhone   := SQLQuery.FieldByName('P_Phone').AsString;
+  nBindID  := SQLQuery.FieldByName('P_CustSerialNo').AsString;
 
   with FListA do
   begin
@@ -264,13 +271,21 @@ begin
     Values['CusID']    := nPID;
     Values['CusName']  := nPName;
     Values['Memo']     := sFlag_Provide;
+    Values['Phone']    := nPhone;
+    Values['BindID']   := nBindID;
+    Values['btype']    := '2';
   end;
-
-  if edit_shopclients(PackerEncodeStr(FListA.Text)) <> sFlag_Yes then Exit;
+  nMsg := edit_shopclients(PackerEncodeStr(FListA.Text));
+  if nMsg <> sFlag_Yes then
+  begin
+     ShowMsg('取消关联商城账户失败：'+nMsg,sHint);
+     Exit;
+  end;
   //call remote
 
-  nStr := 'update %s set P_WechartAccount='''' where P_ID=''%s''';
+  nStr := 'update %s set P_WechartAccount='''',P_Phone='''',P_custSerialNo='''' where P_ID=''%s''';
   nStr := Format(nStr,[sTable_Provider,nPID]);
+
   FDM.ADOConn.BeginTrans;
   try
     FDM.ExecuteSQL(nStr);

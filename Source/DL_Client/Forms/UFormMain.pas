@@ -12,7 +12,8 @@ uses
   UMgrMenu, UTrayIcon, UDataModule, USysFun, UFrameBase, cxGraphics,
   cxControls, cxLookAndFeelPainters, ExtCtrls, Menus,
   UBitmapPanel, cxPC, cxClasses, dxNavBarBase, dxNavBarCollns, dxNavBar,
-  cxSplitter, ComCtrls, StdCtrls, cxLookAndFeels;
+  cxSplitter, ComCtrls, StdCtrls, cxLookAndFeels, dxSkinsCore,
+  dxSkinsDefaultPainters, dxSkinsdxNavBar2Painter, dxSkinscxPCPainter;
 
 type
   TfMainForm = class(TForm)

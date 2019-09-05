@@ -13,7 +13,8 @@ uses
   cxData, cxDataStorage, cxEdit, DB, cxDBData, cxContainer, ADODB, cxLabel,
   UBitmapPanel, cxSplitter, dxLayoutControl, cxGridLevel, cxClasses,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, ComCtrls, ToolWin;
+  cxGridDBTableView, cxGrid, ComCtrls, ToolWin, dxSkinsCore,
+  dxSkinsDefaultPainters, dxSkinscxPCPainter, dxSkinsdxLCPainter;
 
 type
   TfFrameNormal = class(TBaseFrame)

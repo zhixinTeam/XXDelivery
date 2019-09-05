@@ -11,18 +11,17 @@ inherited fFormGetCustom: TfFormGetCustom
   PixelsPerInch = 96
   TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 437
-    Height = 266
-    AutoContentSizes = [acsWidth, acsHeight]
+    Width = 429
+    Height = 261
     inherited BtnOK: TButton
-      Left = 291
-      Top = 233
+      Left = 283
+      Top = 228
       Caption = #30830#23450
       TabOrder = 5
     end
     inherited BtnExit: TButton
-      Left = 361
-      Top = 233
+      Left = 353
+      Top = 228
       TabOrder = 6
     end
     object EditSMan: TcxComboBox [2]
@@ -98,8 +97,6 @@ inherited fFormGetCustom: TfFormGetCustom
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup
-        AutoAligns = [aaHorizontal]
-        AlignVert = avClient
         Caption = #26597#35810#26465#20214
         object dxLayout1Item5: TdxLayoutItem
           Caption = #23458#25143#21517#31216':'

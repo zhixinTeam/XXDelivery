@@ -59,6 +59,7 @@ const
   sField_SQLServer_Now           = 'getDate()';
 
   {*数据库标识*}
+  sFlag_DB_K3         = 'King_K3';                   //金蝶数据库
   sFlag_DB_HH         = 'HH_DB';                     //恒河久远数据库
 
   {*权限项*}
@@ -180,9 +181,18 @@ const
   sFlag_VerifyFQValue = 'VerifyFQValue';             //禁止封签号超发
   sFlag_PEmpTWuCha    = 'EmpTruckWuCha';             //空车出厂误差
 
+  sFlag_WxItem        = 'WxItem';                    //微信相关
+  sFlag_InOutBegin    = 'BeginTime';                 //进出厂查询起始时间
+  sFlag_InOutEnd      = 'EndTime';                   //进出厂查询结束时间
+  sFlag_SealCount     = 'SealCount';                 //铅封录入个数
+  sFlag_NoSealStock   = 'NoSealStock';               //无需录入铅封
+  
   sFlag_WXFactory     = 'WXFactoryID';               //微信标识
   sFlag_WXServiceMIT  = 'WXServiceMIT';              //微信工厂服务
   sFlag_WXSrvRemote   = 'WXServiceRemote';           //微信远程服务
+  sFlag_Rq_WXUrl      = 'WXRqUrl';                   //请求微信网址
+  sFlag_Rq_WXPicUrl   = 'WXRqPicUrl';                //请求微信图片地址
+
 
   sFlag_HHJYServiceMIT= 'HHJYService';              //恒河久远工厂服务
   sFlag_HHJYDepotID   = 'HHJYDepotID';               //恒河久远存货场ID
@@ -300,9 +310,13 @@ const
   sTable_Salesman     = 'S_Salesman';                //业务人员
   sTable_SalesOrder   = 'S_Order';                   //销售订单
 
+  sTable_BillWx       = 'S_BillWX';                  //微信预开提货单
   sTable_Bill         = 'S_Bill';                    //提货单
   sTable_BillBak      = 'S_BillBak';                 //已删交货单
   sTable_Card         = 'S_Card';                    //销售磁卡
+  sTable_ZhiKa        = 'S_ZhiKa';                   //纸卡数据
+  sTable_ZhiKaDtl     = 'S_ZhiKaDtl';                //纸卡明细
+  sTable_AuditTruck   = 'S_AuditTruck';              //车辆审核
 
   sTable_StockMatch   = 'S_StockMatch';              //品种映射
   sTable_StockParam   = 'S_StockParam';              //品种参数
@@ -320,7 +334,15 @@ const
   sTable_Provider     = 'P_Provider';                //客户表
   sTable_Materails    = 'P_Materails';               //物料表
 
+  sTable_PurchasePlan = 'P_PurchasePlan';            //供应商限量
+
+
   sTable_TruckXz      = 'Sys_TruckXz';               //车辆限载表
+
+  sTable_CusAccount   = 'Sys_CustomerAccount';       //客户账户
+  sTable_InOutMoney   = 'Sys_CustomerInOutMoney';    //资金明细
+  sTable_CusCredit    = 'Sys_CustomerCredit';        //客户信用
+  sTable_SysShouJu    = 'Sys_ShouJu';                //收据记录
 
   sTable_DataTemp     = 'Sys_DataTemp';              //临时数据  
   sTable_PoundLog     = 'Sys_PoundLog';              //过磅数据

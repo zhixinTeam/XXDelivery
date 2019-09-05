@@ -160,6 +160,15 @@ const
   cBC_WX_UpLoadAuditTruck     = $0521;   //微信：审核车辆结果上传
   cBC_WX_DownLoadPic          = $0522;   //微信：下载图片
   cBC_WX_get_shoporderbyTruck = $0523;   //微信：根据车牌号获取订单信息
+  cBC_WX_get_shoporderbyTruckClt = $0524;   //微信：根据车牌号获取订单信息  客户端用
+  cBC_WX_get_shoporderStatus  = $0525;   //微信：根据订单号获取订单状态
+  cBC_WX_SearchClient         = $0526;   //微信：根据关键字获取客户信息
+  cBC_WX_SaveCustomerPayment  = $0527;   //微信：新增客户回款
+  cBC_WX_SaveCustomerCredit   = $0528;   //微信：新增客户授信
+  cBC_WX_SaveCustomerWxOrders = $0529;   //微信：新增客户预开单  水泥、原料
+  cBC_WX_GetCustomerWxOrders  = $0530;   //微信：读取微信端客户预开单  水泥、原料
+  cBC_WX_IsCanCreateWXOrder   = $0531;   //微信：
+
 
 type
   PWorkerQueryFieldData = ^TWorkerQueryFieldData;

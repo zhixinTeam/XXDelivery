@@ -61,6 +61,10 @@ const
   cFI_FormPurchase      = $1155;                     //采购验收
   CFI_FormSearchCard    = $1157;                     //磁卡查询
 
+  cFI_FramePurchasePlan = $1158;                     //采购限量控制
+  cFI_FormPurchasePlan  = $1159;                     //采购限量控制
+
+
   cFI_FrameTrucks       = $0070;                     //车辆档案
   cFI_FrameUnloading    = $0071;                     //卸货地点
   cFI_FrameTodo         = $0072;                     //待处理事件
@@ -357,6 +361,10 @@ begin
   AddMenuModuleItem('MAIN_M04', cFI_FrameOrder);
   AddMenuModuleItem('MAIN_M08', cFI_FrameOrderDetail);
   AddMenuModuleItem('MAIN_M13', cFI_FrameQPoundTemp);
+
+  AddMenuModuleItem('MAIN_M14', cFI_FramePurchasePlan);
+  AddMenuModuleItem('MAIN_M15', cFI_FormPurchasePlan, mtForm);
+
 
   AddMenuModuleItem('MAIN_W01', cFI_FrameWXAccount);
   AddMenuModuleItem('MAIN_W02', cFI_FrameWXSendLog);

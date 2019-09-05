@@ -4,6 +4,7 @@
 *******************************************************************************}
 unit uZXNewPurchaseCard;
 
+{$I Link.Inc}
 interface
 
 uses
@@ -12,7 +13,8 @@ uses
   cxContainer, cxEdit, cxLabel, Menus, StdCtrls, cxButtons, cxGroupBox,
   cxRadioGroup, cxTextEdit, cxCheckBox, ExtCtrls, dxLayoutcxEditAdapters,
   dxLayoutControl, cxDropDownEdit, cxMaskEdit, cxButtonEdit,
-  USysConst, cxListBox, ComCtrls,Contnrs,UFormCtrl;
+  USysConst, cxListBox, ComCtrls,Contnrs,UFormCtrl, dxSkinsCore,
+  dxSkinsDefaultPainters, dxSkinsdxLCPainter;
 
 type
   TfFormNewPurchaseCard = class(TForm)
@@ -259,50 +261,88 @@ end;
 function TfFormNewPurchaseCard.DownloadOrder(const nCard: string): Boolean;
 var
   nXmlStr,nData:string;
-  nListA,nListB:TStringList;
+  nListA,nListB,nListC:TStringList;
   i:Integer;
   nWebOrderCount:Integer;
 begin
   Result := False;
   FWebOrderIndex := 0;
+  nListA := TStringList.Create;
+  nListB := TStringList.Create;   nListC := TStringList.Create;
   nXmlStr := PackerEncodeStr(nCard);
 
-  FBegin := now;
-  nData := get_shopPurchaseByno(nXmlStr);
-  if nData='' then
-  begin
-    ShowMsg('未查询到网上商城货单详细信息，请检查货单号是否正确',sHint);
-    Writelog('未查询到网上商城货单详细信息，请检查货单号是否正确');
-    Exit;
-  end;
-
-  Writelog('TfFormNewPurchaseCard.DownloadOrder(nCard='''+nCard+''') 查询商城订单-耗时：'+InttoStr(MilliSecondsBetween(Now, FBegin))+'ms');
-  //解析网城订单信息
-  Writelog('get_shopPurchaseByno res:'+nData);
-  nListA := TStringList.Create;
-  nListB := TStringList.Create;
   try
-    nListA.Text := nData;
-
-    nWebOrderCount := nListA.Count;
-    SetLength(FWebOrderItems,nWebOrderCount);
-    for i := 0 to nWebOrderCount-1 do
+    FBegin := now;
+    nData := get_shopPurchaseByno(nXmlStr);
+    if nData='' then
     begin
-      nListB.Text := PackerDecodeStr(nListA.Strings[i]);
-      FWebOrderItems[i].FOrder_id := nListB.Values['ordernumber'];
-      FWebOrderItems[i].Fpurchasecontract_no := nListB.Values['fac_order_no'];
-      FWebOrderItems[i].FgoodsID := nListB.Values['goodsID'];
-      FWebOrderItems[i].FGoodsname := nListB.Values['goodsname'];
-      FWebOrderItems[i].FData := nListB.Values['data'];
-      FWebOrderItems[i].Ftracknumber := nListB.Values['tracknumber'];
-      FWebOrderItems[i].FOrder_type  := nListB.Values['order_type'];
-      AddListViewItem(FWebOrderItems[i]);
+      ShowMsg('未查询到网上商城货单详细信息，请检查货单号是否正确',sHint);
+      Writelog('未查询到网上商城货单详细信息，请检查货单号是否正确');
+      Exit;
     end;
+
+    Writelog('TfFormNewPurchaseCard.DownloadOrder(nCard='''+nCard+''') 查询商城订单-耗时：'+InttoStr(MilliSecondsBetween(Now, FBegin))+'ms');
+    //解析网城订单信息
+    Writelog('get_shopPurchaseByno res:'+nData);
+
+    {$IFDEF UseWXServiceEx}
+      nListA.Text := PackerDecodeStr(nData);
+
+      nListB.Text := PackerDecodeStr(nListA.Values['details']);
+      nWebOrderCount := nListB.Count;
+      SetLength(FWebOrderItems,nWebOrderCount);
+
+      for i := 0 to nWebOrderCount-1 do
+      begin
+        nListC.Text := PackerDecodeStr(nListB[i]);
+
+        FWebOrderItems[i].FOrder_id     := nListA.Values['orderId'];
+        FWebOrderItems[i].Ftracknumber  := nListA.Values['licensePlate'];
+        FWebOrderItems[i].FfactoryName  := nListA.Values['factoryName'];
+        FWebOrderItems[i].FdriverId     := nListA.Values['driverId'];
+        FWebOrderItems[i].FdrvName      := nListA.Values['drvName'];
+        FWebOrderItems[i].FdrvPhone     := nListA.Values['FdrvPhone'];
+        FWebOrderItems[i].FType         := nListA.Values['type'];
+
+        if nListA.Values['type']='销售' then  FWebOrderItems[i].FOrder_type:= 'S'
+        else FWebOrderItems[i].FOrder_type := 'P';
+
+        with nListC do
+        begin
+          FWebOrderItems[i].FCusID          := Values['clientNo'];
+          FWebOrderItems[i].FCusName        := Values['clientName'];
+          FWebOrderItems[i].FGoodsID        := Values['materielNo'];
+          FWebOrderItems[i].FGoodsname      := Values['materielName'];
+          FWebOrderItems[i].FData           := Values['quantity'];
+          FWebOrderItems[i].Fpurchasecontract_no := Values['contractNo'];
+          FWebOrderItems[i].FOrder_ls       := '';
+          AddListViewItem(FWebOrderItems[i]);
+        end;
+      end;
+    {$ELSE}
+      nListA.Text := nData;
+
+      nWebOrderCount := nListA.Count;
+      SetLength(FWebOrderItems,nWebOrderCount);
+      for i := 0 to nWebOrderCount-1 do
+      begin
+        nListB.Text := PackerDecodeStr(nListA.Strings[i]);
+        FWebOrderItems[i].FOrder_id := nListB.Values['ordernumber'];
+        FWebOrderItems[i].Fpurchasecontract_no := nListB.Values['fac_order_no'];
+        FWebOrderItems[i].FgoodsID := nListB.Values['goodsID'];
+        FWebOrderItems[i].FGoodsname := nListB.Values['goodsname'];
+        FWebOrderItems[i].FData := nListB.Values['data'];
+        FWebOrderItems[i].Ftracknumber := nListB.Values['tracknumber'];
+        FWebOrderItems[i].FOrder_type  := nListB.Values['order_type'];
+        AddListViewItem(FWebOrderItems[i]);
+      end;
+    {$ENDIF}
+    LoadSingleOrder;
   finally
-    nListB.Free;
-    nListA.Free;
+    if nListA<>nil then nListA.Free;
+    if nListB<>nil then nListB.Free;
+    if nListC<>nil then nListC.Free;
   end;
-  LoadSingleOrder;
 end;
 
 procedure TfFormNewPurchaseCard.AddListViewItem(

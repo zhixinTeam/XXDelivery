@@ -11,7 +11,9 @@ uses
   UFrameBase in 'Forms\UFrameBase.pas' {BaseFrame: TBaseFrame},
   UFormBase in 'Forms\UFormBase.pas' {BaseForm},
   UFrameNormal in 'Forms\UFrameNormal.pas' {fFrameNormal: TFrame},
-  UFormNormal in 'Forms\UFormNormal.pas' {fFormNormal};
+  UFormNormal in 'Forms\UFormNormal.pas' {fFormNormal},
+  UFramePurchasePlan in 'Forms\UFramePurchasePlan.pas' {fFramePurchasePlan: TFrame},
+  UFormPurchasePlan in 'Forms\UFormPurchasePlan.pas' {fFormPurchasePlan};
 
 {$R *.res}
 var
@@ -40,6 +42,7 @@ begin
   Application.Initialize;
   Application.CreateForm(TFDM, FDM);
   Application.CreateForm(TfMainForm, fMainForm);
+  Application.CreateForm(TfFormPurchasePlan, fFormPurchasePlan);
   Application.Run;
 
   ReleaseMutex(gMutexHwnd);

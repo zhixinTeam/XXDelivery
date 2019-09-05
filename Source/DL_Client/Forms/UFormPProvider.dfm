@@ -21,6 +21,16 @@ inherited fFormProvider: TfFormProvider
     TabStop = False
     AutoContentSizes = [acsWidth, acsHeight]
     LookAndFeel = FDM.dxLayoutWeb1
+    object lbl1: TLabel
+      Left = 178
+      Top = 111
+      Width = 54
+      Height = 12
+      Caption = #36710'/'#22825'    '
+      Color = clWindow
+      ParentColor = False
+      Visible = False
+    end
     object EditName: TcxTextEdit
       Left = 81
       Top = 61
@@ -33,19 +43,19 @@ inherited fFormProvider: TfFormProvider
     end
     object EditMemo: TcxMemo
       Left = 81
-      Top = 111
+      Top = 136
       Hint = 'T.P_Memo'
       ParentFont = False
       Properties.MaxLength = 50
       Properties.ScrollBars = ssVertical
       Style.Edges = [bBottom]
-      TabOrder = 3
+      TabOrder = 4
       Height = 50
       Width = 368
     end
     object InfoList1: TcxMCListBox
       Left = 23
-      Top = 248
+      Top = 273
       Width = 397
       Height = 104
       HeaderSections = <
@@ -61,42 +71,42 @@ inherited fFormProvider: TfFormProvider
       ParentFont = False
       Style.BorderStyle = cbsOffice11
       Style.Edges = [bLeft, bTop, bRight, bBottom]
-      TabOrder = 8
+      TabOrder = 9
     end
     object InfoItems: TcxComboBox
       Left = 81
-      Top = 198
+      Top = 223
       ParentFont = False
       Properties.ImmediateDropDown = False
       Properties.IncrementalSearch = False
       Properties.MaxLength = 30
-      TabOrder = 4
+      TabOrder = 5
       Width = 75
     end
     object EditInfo: TcxTextEdit
       Left = 81
-      Top = 223
+      Top = 248
       ParentFont = False
       Properties.MaxLength = 50
-      TabOrder = 6
+      TabOrder = 7
       Width = 90
     end
     object BtnAdd: TButton
       Left = 304
-      Top = 198
+      Top = 223
       Width = 45
       Height = 17
       Caption = #28155#21152
-      TabOrder = 5
+      TabOrder = 6
       OnClick = BtnAddClick
     end
     object BtnDel: TButton
       Left = 304
-      Top = 223
+      Top = 248
       Width = 45
       Height = 18
       Caption = #21024#38500
-      TabOrder = 7
+      TabOrder = 8
       OnClick = BtnDelClick
     end
     object BtnOK: TButton
@@ -105,7 +115,7 @@ inherited fFormProvider: TfFormProvider
       Width = 69
       Height = 23
       Caption = #20445#23384
-      TabOrder = 9
+      TabOrder = 10
       OnClick = BtnOKClick
     end
     object BtnExit: TButton
@@ -114,7 +124,7 @@ inherited fFormProvider: TfFormProvider
       Width = 70
       Height = 23
       Caption = #21462#28040
-      TabOrder = 10
+      TabOrder = 11
       OnClick = BtnExitClick
     end
     object cxTextEdit3: TcxTextEdit
@@ -136,6 +146,16 @@ inherited fFormProvider: TfFormProvider
       TabOrder = 0
       OnKeyDown = FormKeyDown
       Width = 278
+    end
+    object edt_11: TcxTextEdit
+      Left = 81
+      Top = 111
+      Hint = 'T.P_MaxNum'
+      ParentFont = False
+      Properties.MaxLength = 18
+      TabOrder = 3
+      Visible = False
+      Width = 92
     end
     object dxLayoutControl1Group_Root: TdxLayoutGroup
       ShowCaption = False
@@ -165,6 +185,26 @@ inherited fFormProvider: TfFormProvider
             Caption = #32852#31995#26041#24335':'
             Control = cxTextEdit3
             ControlOptions.ShowBorder = False
+          end
+          object dxLayoutControl1Group6: TdxLayoutGroup
+            ShowCaption = False
+            Hidden = True
+            LayoutDirection = ldHorizontal
+            ShowBorder = False
+            object dxlytmLayoutControl1Item1: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              Caption = #27599#26085#38480#37327':'
+              Visible = False
+              Control = edt_11
+              ControlOptions.ShowBorder = False
+            end
+            object dxlytmLayoutControl1Item11: TdxLayoutItem
+              AutoAligns = [aaVertical]
+              ShowCaption = False
+              Control = lbl1
+              ControlOptions.AutoColor = True
+              ControlOptions.ShowBorder = False
+            end
           end
         end
         object dxLayoutControl1Item4: TdxLayoutItem
