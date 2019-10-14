@@ -10,7 +10,9 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   Dialogs, UFormNormal, cxGraphics, cxContainer, cxEdit, cxTextEdit,
   cxMaskEdit, cxDropDownEdit, dxLayoutControl, StdCtrls, cxControls,
-  ComCtrls, cxListView, cxButtonEdit, cxLabel;
+  ComCtrls, cxListView, cxButtonEdit, cxLabel, cxLookAndFeels,
+  cxLookAndFeelPainters, dxSkinsCore, dxSkinsDefaultPainters,
+  dxSkinsdxLCPainter;
 
 type
   TfFormStockNo = class(TfFormNormal)
@@ -29,7 +31,7 @@ type
       AButtonIndex: Integer);
   private
     { Private declarations }
-    FStockNo: string;
+    FStockNo,FStockName: string;
     //水泥编号
     FMaxValue: Double;
     //每批次量
@@ -68,6 +70,7 @@ begin
     
     nP.FParamA := ShowModal;
     nP.FParamB := FStockNo;
+    nP.FParamC := FStockName;
     Free;
   end;
 end;
@@ -169,8 +172,15 @@ end;
 procedure TfFormStockNo.GetResult;
 begin
   if Assigned(ListStock.Selected) then
-       FStockNo := ListStock.Selected.Caption
-  else FStockNo := '';
+  begin
+    FStockNo   := ListStock.Selected.Caption;
+    FStockName := ListStock.Selected.SubItems[0];
+  end
+  else
+  begin
+    FStockNo  := '';
+    FStockName:= '';
+  end;
 end;
 
 procedure TfFormStockNo.ListStockKeyPress(Sender: TObject;
@@ -198,8 +208,10 @@ procedure TfFormStockNo.BtnOKClick(Sender: TObject);
 begin
   if ListStock.ItemIndex > -1 then
   begin
-    GetResult; ModalResult := mrOk;
-  end else ShowMsg('请在查询结果中选择', sHint);
+    GetResult;
+    ModalResult := mrOk;
+  end
+  else ShowMsg('请在查询结果中选择', sHint);
 end;
 
 initialization

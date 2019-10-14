@@ -9,18 +9,17 @@ inherited fFormStockNo: TfFormStockNo
   PixelsPerInch = 96
   TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 458
-    Height = 266
-    AutoContentSizes = [acsWidth, acsHeight]
+    Width = 450
+    Height = 261
     inherited BtnOK: TButton
-      Left = 312
-      Top = 233
+      Left = 304
+      Top = 228
       Caption = #30830#23450
       TabOrder = 3
     end
     inherited BtnExit: TButton
-      Left = 382
-      Top = 233
+      Left = 374
+      Top = 228
       TabOrder = 4
     end
     object EditNo: TcxButtonEdit [2]
@@ -85,8 +84,6 @@ inherited fFormStockNo: TfFormStockNo
     end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup
-        AutoAligns = [aaHorizontal]
-        AlignVert = avClient
         Caption = #26597#35810#26465#20214
         object dxLayout1Item5: TdxLayoutItem
           Caption = #27700#27877#32534#21495':'

@@ -73,6 +73,13 @@ const
   cFI_FramePoundQueryOther=$0075;                    //矿山外运磅单查询
 
   cFI_FrameTruckXz      = $0076;                     //车辆限载管理
+  cFI_FrameStockGroup   = $0077;                     //销售品种分组
+  cFI_FormStockGroup    = $0078;                     //销售品种分组
+  cFI_FrameSalePlan     = $0079;                     //销售限量计划
+  cFI_FormSalePlan      = $0080;                     //销售限量计划
+  cFI_FormEditStockGroup= $0081;                     //品种分组编辑
+  cFI_FormSalePlanDtl   = $0082;                     //客户、品种分组限量明细
+
 
   cFI_FormMemo          = $1000;                     //备注窗口
   cFI_FormBackup        = $1001;                     //数据备份
@@ -319,6 +326,11 @@ begin
   AddMenuModuleItem('MAIN_D08', cFI_FormTruckEmpty, mtForm);
   AddMenuModuleItem('MAIN_D10', cFI_FrameBillPost);
   AddMenuModuleItem('MAIN_D11', cFI_FrameSaleOrderOther);
+
+  AddMenuModuleItem('MAIN_D12', cFI_FrameStockGroup);
+  AddMenuModuleItem('MAIN_D13', cFI_FormStockGroup, mtForm);
+  AddMenuModuleItem('MAIN_D14', cFI_FrameSalePlan);
+  AddMenuModuleItem('MAIN_D15', cFI_FormSalePlan, mtForm);
 
   AddMenuModuleItem('MAIN_E01', cFI_FramePoundManual);
   AddMenuModuleItem('MAIN_E02', cFI_FramePoundAuto);

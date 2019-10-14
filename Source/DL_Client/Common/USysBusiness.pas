@@ -78,6 +78,8 @@ function GetCardUsed(const nCard: string): string;
 //获取卡片类型
 function LoadSysDictItem(const nItem: string; const nList: TStrings): TDataSet;
 //读取系统字典项
+
+function LoadStockGroup(const nList: TStrings; const nWhere: string = ''): Boolean;
 function LoadSaleMan(const nList: TStrings; const nWhere: string = ''): Boolean;
 //读取业务员列表
 function LoadCustomer(const nList: TStrings; const nWhere: string = ''): Boolean;
@@ -698,6 +700,24 @@ begin
       Next;
     end;
   end else Result := nil;
+end;
+
+//Desc: 读取品种分组列表到nList中,包含附加数据
+function LoadStockGroup(const nList: TStrings; const nWhere: string = ''): Boolean;
+var nStr,nW: string;
+begin
+  if nWhere = '' then
+       nW := ''
+  else nW := Format(' And (%s)', [nWhere]);
+
+  nStr := 'R_ID=Select R_ID,R_ID GNo, G_Name From %s Where 1=1 ';
+  nStr := Format(nStr, [sTable_StockGroup, nW]);
+
+  AdjustStringsItem(nList, True);
+  FDM.FillStringsData(nList, nStr, -1, '.', DSA(['R_ID']));
+
+  AdjustStringsItem(nList, False);
+  Result := nList.Count > 0;
 end;
 
 //Desc: 读取业务员列表到nList中,包含附加数据

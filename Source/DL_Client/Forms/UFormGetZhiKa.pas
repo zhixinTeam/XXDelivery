@@ -15,7 +15,8 @@ uses
   dxLayoutControl, StdCtrls, cxStyles, cxCustomData, cxFilter, cxData,
   cxDataStorage, DB, cxDBData, ADODB, cxGridLevel, cxClasses,
   cxGridCustomView, cxGridCustomTableView, cxGridTableView,
-  cxGridDBTableView, cxGrid, Menus, cxButtons, DateUtils;
+  cxGridDBTableView, cxGrid, Menus, cxButtons, DateUtils, dxSkinsCore,
+  dxSkinsDefaultPainters, dxSkinsdxLCPainter, dxSkinscxPCPainter;
 
 type
   TfFormGetZhiKa = class(TfFormNormal)

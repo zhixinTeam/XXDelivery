@@ -37,7 +37,8 @@ uses
   UFrameBatcodeRecord, UFormSealInfo,
   //for huayan
   UFrameOrderCard,UFramePurchaseOrder,UFrameOrderDetail,UFrameOtherCard,
-  UFormCardOther,UFormPurchaseOrder,UFormGetPOrderBase,UFormPurchasing;
+  UFormCardOther,UFormPurchaseOrder,UFormGetPOrderBase,UFormPurchasing,
+  UFrameStockGroup,UFormStockGroup,UFormEditStockGroup,UFrameSalePlan,UFromSalePlan,UFormSalePlanDtl;
   //for sale
 
 

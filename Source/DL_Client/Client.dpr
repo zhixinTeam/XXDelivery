@@ -13,7 +13,11 @@ uses
   UFrameNormal in 'Forms\UFrameNormal.pas' {fFrameNormal: TFrame},
   UFormNormal in 'Forms\UFormNormal.pas' {fFormNormal},
   UFramePurchasePlan in 'Forms\UFramePurchasePlan.pas' {fFramePurchasePlan: TFrame},
-  UFormPurchasePlan in 'Forms\UFormPurchasePlan.pas' {fFormPurchasePlan};
+  UFormPurchasePlan in 'Forms\UFormPurchasePlan.pas' {fFormPurchasePlan},
+  UFormStockGroup in 'Forms\UFormStockGroup.pas' {fFormStockGroup},
+  UFormEditStockGroup in 'Forms\UFormEditStockGroup.pas' {fFormEditStockGroup},
+  UFromSalePlan in 'Forms\UFromSalePlan.pas' {fFormSalePlan},
+  UFormSalePlanDtl in 'Forms\UFormSalePlanDtl.pas' {fFormSalePlanDtl};
 
 {$R *.res}
 var
@@ -43,6 +47,10 @@ begin
   Application.CreateForm(TFDM, FDM);
   Application.CreateForm(TfMainForm, fMainForm);
   Application.CreateForm(TfFormPurchasePlan, fFormPurchasePlan);
+  Application.CreateForm(TfFormStockGroup, fFormStockGroup);
+  Application.CreateForm(TfFormEditStockGroup, fFormEditStockGroup);
+  Application.CreateForm(TfFormSalePlan, fFormSalePlan);
+  Application.CreateForm(TfFormSalePlanDtl, fFormSalePlanDtl);
   Application.Run;
 
   ReleaseMutex(gMutexHwnd);

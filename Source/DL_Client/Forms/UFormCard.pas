@@ -10,7 +10,8 @@ uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
   CPort, CPortTypes, UFormNormal, UFormBase, cxControls, cxLookAndFeels,
   cxLookAndFeelPainters, cxContainer, cxEdit, cxLabel, cxTextEdit,
-  dxLayoutControl, StdCtrls, cxGraphics;
+  dxLayoutControl, StdCtrls, cxGraphics, dxSkinsCore,
+  dxSkinsDefaultPainters, dxSkinsdxLCPainter;
 
 type
   TfFormCard = class(TfFormNormal)

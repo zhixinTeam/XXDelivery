@@ -1,8 +1,8 @@
 inherited fFormGetZhiKa: TfFormGetZhiKa
   Left = 351
   Top = 280
-  Width = 904
-  Height = 430
+  Width = 888
+  Height = 448
   BorderStyle = bsSizeable
   Position = poDesktopCenter
   OnClose = FormClose
@@ -10,17 +10,17 @@ inherited fFormGetZhiKa: TfFormGetZhiKa
   PixelsPerInch = 96
   TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 888
-    Height = 392
+    Width = 872
+    Height = 409
     inherited BtnOK: TButton
-      Left = 742
-      Top = 359
+      Left = 726
+      Top = 376
       Caption = #30830#23450
       TabOrder = 4
     end
     inherited BtnExit: TButton
-      Left = 812
-      Top = 359
+      Left = 796
+      Top = 376
       TabOrder = 5
     end
     object GridOrders: TcxGrid [2]

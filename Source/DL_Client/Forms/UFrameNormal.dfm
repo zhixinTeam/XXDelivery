@@ -100,6 +100,12 @@ inherited fFrameNormal: TfFrameNormal
     Height = 200
     Align = alClient
     BorderStyle = cxcbsNone
+    Font.Charset = GB2312_CHARSET
+    Font.Color = clWindowText
+    Font.Height = -13
+    Font.Name = #24494#36719#38597#40657
+    Font.Style = []
+    ParentFont = False
     TabOrder = 1
     object cxView1: TcxGridDBTableView
       OnKeyPress = cxView1KeyPress

@@ -375,6 +375,7 @@ begin
   nStr := Format(nStr,[sTable_Customer, nID]);
   FDM.ExecuteSQL(nStr);
 
+  InitFormData(FWhere);
   ShowMsg('取消商城关联成功！', sHint);
 end;
 

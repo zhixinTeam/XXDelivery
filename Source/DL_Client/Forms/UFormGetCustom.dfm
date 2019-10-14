@@ -2,7 +2,7 @@ inherited fFormGetCustom: TfFormGetCustom
   Left = 401
   Top = 134
   Width = 445
-  Height = 300
+  Height = 320
   BorderStyle = bsSizeable
   Constraints.MinHeight = 300
   Constraints.MinWidth = 445
@@ -12,16 +12,16 @@ inherited fFormGetCustom: TfFormGetCustom
   TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
     Width = 429
-    Height = 261
+    Height = 281
     inherited BtnOK: TButton
       Left = 283
-      Top = 228
+      Top = 248
       Caption = #30830#23450
       TabOrder = 5
     end
     inherited BtnExit: TButton
       Left = 353
-      Top = 228
+      Top = 248
       TabOrder = 6
     end
     object EditSMan: TcxComboBox [2]

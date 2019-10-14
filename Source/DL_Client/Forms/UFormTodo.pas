@@ -11,7 +11,8 @@ uses
   UDataModule, UFormNormal, cxGraphics, cxControls, cxLookAndFeels,
   cxLookAndFeelPainters, cxContainer, cxEdit, ComCtrls, ImgList, DB, ADODB,
   ExtCtrls, cxGroupBox, cxRadioGroup, cxMemo, cxTextEdit, cxListView,
-  cxLabel, dxLayoutControl, StdCtrls;
+  cxLabel, dxLayoutControl, StdCtrls, dxSkinsCore, dxSkinsDefaultPainters,
+  dxSkinsdxLCPainter;
 
 type
   TfFormTodo = class(TfFormNormal)
@@ -176,7 +177,7 @@ begin
   end;
 
   with ADOQuery1 do
-  try                            
+  try
     nStr := 'Select * from %s Where (E_Date>=%s-1 and E_Result Is Null ' +
             'and E_Departmen=''%s'') or (E_Date>=dateadd(hour,-1,%s) and ' +
             'E_Departmen=''%s'') Order By R_ID desc';

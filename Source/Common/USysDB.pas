@@ -335,6 +335,9 @@ const
   sTable_Materails    = 'P_Materails';               //物料表
 
   sTable_PurchasePlan = 'P_PurchasePlan';            //供应商限量
+  sTable_StockGroup   = 'Sys_StockGroup';            //销售物料分组
+  sTable_SalePlan     = 'Sys_SalePlan';              //销售限量计划
+  sTable_SalePlanDtl  = 'Sys_SalePlanDtl';           //销售限量计划明细
 
 
   sTable_TruckXz      = 'Sys_TruckXz';               //车辆限载表
@@ -1441,6 +1444,53 @@ const
    *.X_Memo: 备注
   -----------------------------------------------------------------------------}
 
+  sSQL_SalePlan = 'Create Table $Table(R_ID $Inc, S_PlanName  varchar(32) NULL,' +
+            'S_StockGID  int NULL, S_StartTime DateTime NULL,S_EndTime   DateTime NULL,' +
+            'S_Man varchar(20) NULL,S_Date DateTime NULL,S_IsValid   Char(1) Not Null Default ''YY'')';
+  {-----------------------------------------------------------------------------
+   限量计划表: Sys_SalePlan
+   *.R_ID         : 计划编号
+   *.S_PlanName   : 计划名称
+   *.S_StockGID   : 分组编号
+   *.S_StartTime  : 开始时间
+   *.S_EndTime    : 结束时间
+   *.S_Man        : 操作人
+   *.S_Date       : 操作时间
+   *.S_IsValid    : 是否有效
+  -----------------------------------------------------------------------------}
+
+  sSQL_SalePlanDtl = 'Create Table $Table(R_ID $Inc, S_PlanID int NULL, S_PlanName varchar(20) NULL,' +
+            'S_MaxNum int NULL, S_MaxValue  Decimal(15,2) NULL, S_CusID varchar(20) NULL,' +
+            'S_CusName varchar(100) NULL, S_Man varchar(20) NULL, S_Date DateTime NULL)';
+  {-----------------------------------------------------------------------------
+   限量明细表: Sys_SalePlanDtl
+   *.R_ID        : 编号
+   *.S_PlanID    : 计划编号
+   *.S_PlanName  : 计划名称
+   *.S_MaxNum    : 日车数上限
+   *.S_MaxValue  : 日吨数上限
+   *.S_CusID     : 客户编号
+   *.S_CusName   : 客户
+   *.S_Man       : 操作人
+   *.S_Date      : 操作时间
+  -----------------------------------------------------------------------------}
+
+  sSQL_StockGroup = 'Create Table $Table(R_ID $Inc, G_Name varchar(32) NULL)';
+  {-----------------------------------------------------------------------------
+   分组表: Sys_StockGroup
+   *.R_ID        : 编号
+   *.S_PlanID    : 计划编号
+   *.S_PlanName  : 计划名称
+   *.S_MaxNum    : 日车数上限
+   *.S_MaxValue  : 日吨数上限
+   *.S_CusID     : 客户编号
+   *.S_CusName   : 客户
+   *.S_Man       : 操作人
+   *.S_Date      : 操作时间
+  -----------------------------------------------------------------------------}
+
+
+
 function CardStatusToStr(const nStatus: string): string;
 //磁卡状态
 function TruckStatusToStr(const nStatus: string): string;
@@ -1562,6 +1612,10 @@ begin
   AddSysTableItem(sTable_HHJYSync,sSQL_NewHHJYSync);
 
   AddSysTableItem(sTable_TruckXz,sSQL_NewXzInfo);
+
+  AddSysTableItem(sTable_SalePlan,sSQL_SalePlan);
+  AddSysTableItem(sTable_SalePlanDtl,sSQL_SalePlanDtl);
+  AddSysTableItem(sTable_StockGroup,sSQL_StockGroup);
 end;
 
 //Desc: 清理系统表
