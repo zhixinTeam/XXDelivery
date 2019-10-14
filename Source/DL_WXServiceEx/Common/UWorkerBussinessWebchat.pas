@@ -126,7 +126,8 @@ type
     function get_shoporderByTruck(var nData: string): boolean;
     //根据车牌号获取订单信息
 
-    function GetCusOrderCreateStatus(nCusId, nType: string;nNum:Double;var nMax:Double; var nCanCreate:Boolean): Boolean;
+    //function GetCusOrderCreateStatus(nCusId, nType: string;nNum:Double;var nMax:Double; var nCanCreate:Boolean): Boolean;
+    function GetCusOrderCreateStatus(nCID, nMID: string;nValue:Double;var nMax:Double;var ReData:string;var nCanCreate:Boolean): Boolean;
     function GetProviderOrderCreateStatus(nProId,nMId: string;var nMax:Double; var nCanCreate:Boolean): Boolean;
 
     function GetCustomerInfo(var nData: string): Boolean;                       // Dl--->WxService
@@ -834,7 +835,7 @@ begin
     wParam.Free;
   end;
 end;
-
+                                 {
 function TBusWorkerBusinessWebchat.GetCusOrderCreateStatus(nCusId, nType: string;nNum:Double;
                         var nMax:Double; var nCanCreate:Boolean): Boolean;
 var nStr, nTime: string;
@@ -897,6 +898,114 @@ begin
     end;
   end;
   Result:= True;
+end;    }
+
+function TBusWorkerBusinessWebchat.GetCusOrderCreateStatus(nCID, nMID: string;nValue:Double;
+             var nMax:Double;var ReData:string;var nCanCreate:Boolean): Boolean;
+var nStr, nTime, nGID, nMName, nStype: string;
+    nMaxValue, nMaxNum, nVal:Double;
+    nDBConn : PDBWorker;
+    nIdx : Integer;
+begin
+  Result    := False;
+  nCanCreate:= True;
+  nMaxValue := 0;  nMaxNum := 0;
+
+  try
+    nDBConn := gDBConnManager.GetConnection(gParamManager.ActiveParam^.FDB.FID, nIdx);
+    if not Assigned(nDBConn) then Exit;
+
+    if not nDBConn.FConn.Connected then
+      nDBConn.FConn.Connected := True;
+
+    //***************************************  限量计划每日时间节点
+    nStr := 'Select D_Value From %s Where D_Name=''SysParam'' And D_Memo=''SalePurPlanTime''' ;
+    nStr := Format(nStr,[sTable_SysDict]);
+    with gDBConnManager.WorkerQuery(nDBConn, nStr) do
+    begin
+      nTime:= Fieldbyname('D_Value').AsString;
+    end;
+    if nTime='' then nTime:= '07:30:00';
+    //*******        物料所属分组
+    nStr := 'Select * From %s Where D_Name=''StockItem'' And D_ParamB=''%s''' ;
+    nStr := Format(nStr,[sTable_SysDict, nMID]);
+    with gDBConnManager.WorkerQuery(nDBConn, nStr) do
+    begin
+      nGID  := Fieldbyname('D_ParamA').AsString;
+      nMName:= Fieldbyname('D_Value').AsString;
+      nStype:= Fieldbyname('D_Memo').AsString;
+    end;
+    if nGID='' then
+    begin
+      WriteLog('未查询到物料 '+nMID+' 所属分组、默认允许开单');
+      Exit;
+    end;
+
+    nStr := ' Select d.*, isNull(S_MaxValue, 0) MaxValue, isNull(S_MaxNum, 0) MaxNum, a.S_StartTime, a.S_EndTime From %s d Left Join %s a On S_PlanID= a.R_ID ' +
+            ' Where S_IsValid=''Y'' And S_CusID=''%s'' And S_StockGID=%s And GETDATE()>=S_StartTime And GETDATE()<=S_EndTime ';
+    nStr := Format(nStr,[sTable_SalePlanDtl, sTable_SalePlan, nCID, nGID]);   WriteLog(nStr);
+    with gDBConnManager.WorkerQuery(nDBConn, nStr) do
+    begin
+      if recordcount>0 then
+      begin
+        nMaxValue:= Fieldbyname('MaxValue').AsFloat;
+        nMaxNum  := Fieldbyname('MaxNum').AsFloat;
+
+        WriteLog(Fieldbyname('S_CusName').AsString+' 限量 MaxValue:'+FloatToStr(nMaxValue)+' MaxNum:'+FloatToStr(nMaxNum));
+      end
+      else
+      begin
+        Result:= True;
+        WriteLog('未查询到限量计划、默认允许开单');
+        Exit;
+      end;
+    end;
+
+
+    nStr := 'Select COUNT(*) Num, SUM(ISNULL(Value, 0)) Value, D_ParamA From $Bill Left Join Sys_Dict On D_ParamB=StockNo '+
+            'Where  D_Name=''StockItem'' And CusID=''$CID'' And D_ParamA=$GID And (CreateDate>=''$STime'' And CreateDate<''$ETime'') ' +
+            'Group  by  D_ParamA' ;
+    nStr := MacroValue(nStr, [MI('$Bill', sTable_BillWx),
+                              MI('$CID', nCID), MI('$GID', nGID),
+                              MI('$STime', FormatDateTime('yyyy-MM-dd '+nTime, Now)),
+                              MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,1)))]);
+    with gDBConnManager.WorkerQuery(nDBConn, nStr) do
+    begin       
+      if recordcount>0 then
+      if nMaxValue=0 then
+      begin
+        nCanCreate := nMaxNum>Fieldbyname('Num').AsFloat;
+
+        if nMaxNum>Fieldbyname('Num').AsFloat then
+          nMax:= nMaxNum-Fieldbyname('Num').AsFloat
+        else nMax:= 0;
+      end
+      else
+      begin
+        nCanCreate := nMaxValue>Fieldbyname('Value').AsFloat;
+
+        if nMaxValue>=Fieldbyname('Value').AsFloat then
+          nMax:= nMaxValue-Fieldbyname('Value').AsFloat
+        else nMax:= 0;
+      end;
+    end;
+    Result:= True;
+  finally
+    begin
+      gDBConnManager.ReleaseConnection(nDBConn);
+      
+      if nMaxValue=0 then
+      begin
+        ReData:= FloatToStr(nMax)+' 车';
+        WriteLog(nCID +' '+ nMName + ' 允许开单:'+BoolToStr(nCanCreate, True) + ' 剩余:'+FloatToStr(nMax)+' 车');
+      end
+      else
+      begin
+        ReData:= FloatToStr(nMax)+' 吨';
+        WriteLog(nCID +' '+ nMName + ' 允许开单:'+BoolToStr(nCanCreate, True) + ' 剩余:'+FloatToStr(nMax)+' 吨');
+      end;
+    end;
+  end;
 end;
 
 //Date: 2017-10-28
@@ -1064,11 +1173,6 @@ begin
     end;
     {$ENDIF}
 
-    {$IFDEF WXCreateOrderCtrl}
-    GetCusOrderCreateStatus(FIn.FData, 'S',0,nMax,nSan);
-    GetCusOrderCreateStatus(FIn.FData, 'D',0,nMax,nDai);
-    {$ENDIF}
-
     nStr := 'Select O_Order,' +                    //销售卡片编号
           '  O_StockType,' +                       //类型(袋,散)
           '  O_StockID,' +                         //水泥编号
@@ -1110,10 +1214,7 @@ begin
       while not Eof do
       begin
         {$IFDEF WXCreateOrderCtrl}
-        nCanCreate:= False;
-        if nSan and (FieldByName('O_StockType').AsString='S') then nCanCreate:= True;
-        if nDai and (FieldByName('O_StockType').AsString='D') then nCanCreate:= True;
-        if nDai and (FieldByName('O_StockType').AsString='D')and(nMax=0) then nCanCreate:= False;
+        GetCusOrderCreateStatus(FIn.FData, FieldByName('O_StockID').AsString,0,nMax,nStr,nCanCreate);
 
         if nCanCreate then
         {$ENDIF}
@@ -1122,8 +1223,7 @@ begin
             NodeNew('SetDate').ValueAsString    := FieldByName('O_Create').AsString;
             NodeNew('BillNumber').ValueAsString := FieldByName('O_Order').AsString;
             NodeNew('StockNo').ValueAsString    := FieldByName('O_StockID').AsString;
-            NodeNew('StockName').ValueAsString  := FieldByName('O_StockName').AsString
-                                                 + FieldByName('O_StockType').AsString;
+            NodeNew('StockName').ValueAsString  := FieldByName('O_StockName').AsString; //+ FieldByName('O_StockType').AsString
             NodeNew('StockType').ValueAsString  := FieldByName('O_StockType').AsString;
             {$IFDEF SyncDataByWSDL}
             try
@@ -1151,7 +1251,7 @@ begin
       {$IFDEF WXCreateOrderCtrl}
       if not nReData then
       begin
-        nData := '开单车数、吨数已达开单上限、请联系工厂处理';
+        nData := '开单车数、吨数已达分配限量上限、请联系工厂处理';
         Exit;
       end;
       {$ENDIF}
@@ -4112,12 +4212,12 @@ end;
 //Desc: 保存微信客户的预开订单  销售、原料单 便于做开单控制
 function TBusWorkerBusinessWebchat.SaveCustomerWxOrders(var nData: string): Boolean;
 var nStr,nLID,nCusID,nCusName,nStNo,nStName,nStatus,nStType,nTruck,nTime,nNum,nZhiKa,nReFlag: string;
-    nBool, nCredit: Boolean;
+    nBool, nCredit, nCanDel: Boolean;
     nVal,nLimit,nMoney: Double;
     nRoot, nheader, nbody: TXmlNode;
     nReDs : TDataSet;
 begin
-  Result := False;
+  Result := False;  nCanDel:= False;
   nReFlag:= sFlag_No;
   nLimit:= 0; nVal:= 0; //nDate:= Format('''%s''', [DateTime2Str(Now)]);
   WriteLog('客户预开单入参：'+nData);
@@ -4132,6 +4232,10 @@ begin
       //************************************************************
       nLID    := nbody.NodeByName('OrderNo').ValueAsString;
       try
+        nStr := 'Select * From S_WebOrderMatch Where WOM_WebOrderID=''$LID'' ';
+        nStr := MacroValue(nStr, [MI('$LID', nLID)]);
+        nCanDel := gDBConnManager.WorkerQuery(FDBConn, nStr).RecordCount=0;
+        ///***************
         nStr := 'Select * From $BB Where ID=''$LID'' ';
         nStr := MacroValue(nStr, [MI('$BB', sTable_BillWx),MI('$LID', nLID)]);
         nReDs := gDBConnManager.WorkerQuery(FDBConn, nStr);
@@ -4157,14 +4261,20 @@ begin
                             MI('$StType', nStType),MI('$StockNo', nStNo),MI('$StockName', nStName),
                             MI('$Value', nNum),MI('$Truck', nTruck) ]);
           nData:= '新增';
+          gDBConnManager.WorkerExec(FDBConn, nStr);
         end
         else
         begin
-          nStr := 'Delete $BB Where ID=''$LID'' ';
-          nStr := MacroValue(nStr, [MI('$BB', sTable_BillWx),MI('$LID', nLID)]);
-          nData:= '删除';
+          if nCanDel then
+          begin
+            nStr := 'Delete $BB Where ID=''$LID'' ';
+            nStr := MacroValue(nStr, [MI('$BB', sTable_BillWx),MI('$LID', nLID)]);
+            gDBConnManager.WorkerExec(FDBConn, nStr);
+
+            nData:= '删除';
+          end
+          else nData:= '已开单禁止删除';
         end;
-        gDBConnManager.WorkerExec(FDBConn, nStr);
         WriteLog(nStr);
 
         nReFlag:= sFlag_Yes;
@@ -4254,6 +4364,8 @@ begin
 
           ArrsJa   := ReJo['body'].AsArray;
           if ArrsJa = nil then Exit;
+
+          WriteLog('本次读取到的预开单数量：'+ IntToStr(ArrsJa.Length));
           for nIdx := 0 to ArrsJa.Length - 1 do
           begin
             OneJo  := SO(ArrsJa.S[nIdx]);
@@ -4360,10 +4472,10 @@ begin
 
         if (nOType='1') then       ///1  销售   2  采购
         begin
-          GetCusOrderCreateStatus(nCusID,nSType,nNum,nMax,Result);
+          GetCusOrderCreateStatus(nCusID,nStockNo,nNum,nMax,nStr,Result);
           if nSType='S' then
-            nData  := Format('客户 %s 剩余可开 散装：%g 车', [nCusID, nMax])
-          else nData  := Format('客户 %s 剩余可开 袋装：%g 吨', [nCusID, nMax]);
+               nData:= Format('该品种剩余可开 %s', [nCusID, nStr])
+          else nData:= Format('该品种剩余可开 %s', [nCusID, nStr]);
         end
         else
         begin

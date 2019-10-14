@@ -3,7 +3,7 @@ object fFormMain: TfFormMain
   Top = 246
   Width = 892
   Height = 606
-  Caption = #19994#21153#20013#38388#20214
+  Caption = #24494#20449#19994#21153#20013#38388#20214
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -19,7 +19,7 @@ object fFormMain: TfFormMain
     Left = 0
     Top = 48
     Width = 180
-    Height = 501
+    Height = 500
     Align = alLeft
     Color = 14408641
     ActiveGroupIndex = 0
@@ -938,7 +938,7 @@ object fFormMain: TfFormMain
   end
   object SBar: TStatusBar
     Left = 0
-    Top = 549
+    Top = 548
     Width = 876
     Height = 19
     Panels = <
@@ -956,7 +956,7 @@ object fFormMain: TfFormMain
     Left = 180
     Top = 48
     Width = 696
-    Height = 501
+    Height = 500
     Align = alClient
     BevelOuter = bvNone
     DockSite = True
