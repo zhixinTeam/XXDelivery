@@ -79,7 +79,8 @@ const
   cFI_FormSalePlan      = $0080;                     //销售限量计划
   cFI_FormEditStockGroup= $0081;                     //品种分组编辑
   cFI_FormSalePlanDtl   = $0082;                     //客户、品种分组限量明细
-
+  cFI_FormBatchGetCus   = $0083;                     //多选客户
+  
 
   cFI_FormMemo          = $1000;                     //备注窗口
   cFI_FormBackup        = $1001;                     //数据备份

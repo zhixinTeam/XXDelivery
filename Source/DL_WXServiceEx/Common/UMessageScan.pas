@@ -189,7 +189,7 @@ begin
 
     Inc(FNumOutFactMsg);
 
-    if FNumOutFactMsg >= 3 then
+    if FNumOutFactMsg >= 16 then
       FNumOutFactMsg := 0;
 
     //--------------------------------------------------------------------------
@@ -455,7 +455,7 @@ var nStr: string;
     nErr,nIdx: Integer;
     nOut: TWorkerWebChatData;
 begin
-  nStr:= 'select top 1000 * from %s where WOM_StatusType =%d Order by R_ID desc';
+  nStr:= 'select top 300 * from %s where WOM_StatusType =%d Order by R_ID desc';
   nStr:= Format(nStr,[sTable_WebOrderMatch, c_WeChatStatusCreateCard]);
   //查询最近1000条网上开单记录
   with gDBConnManager.WorkerQuery(FDBConn, nStr) do
@@ -463,7 +463,7 @@ begin
     if RecordCount < 1 then
       Exit;
     //无新消息
-    WriteLog('共查询到'+ IntToStr(RecordCount) + '条数据,开始筛选...');
+    WriteLog('共查询到 '+ IntToStr(RecordCount) + ' 条数据,开始筛选...');
     nInit := GetTickCount;
     FListB.Clear;
 

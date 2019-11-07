@@ -8,7 +8,7 @@ uses
   cxLookAndFeelPainters, dxSkinsCore, dxSkinsDefaultPainters, DateUtils,
   dxSkinsdxLCPainter, dxLayoutControl, StdCtrls, cxContainer, cxEdit,
   cxTextEdit, cxRadioGroup, cxMaskEdit, cxDropDownEdit, cxCalendar,
-  cxButtonEdit;
+  cxButtonEdit, cxCheckBox;
 
 type
   TfFormSalePlan = class(TfFormNormal)
@@ -21,6 +21,8 @@ type
     edt_Name: TcxTextEdit;
     cbb_GroupName: TcxComboBox;
     dxlytmLayout1Item61: TdxLayoutItem;
+    Chk1: TcxCheckBox;
+    dxlytmLayout1Item3: TdxLayoutItem;
     procedure BtnOKClick(Sender: TObject);
   private
     FID : string;
@@ -106,6 +108,8 @@ begin
             cbb_GroupName.Text := nPlan[2];
             DateEdt_STime.Date := StrToDateTime(StringReplace(nPlan[3], '@', ' ', [rfReplaceAll]));
             DateEdt_ETime.Date := StrToDateTime(StringReplace(nPlan[4], '@', ' ', [rfReplaceAll]));
+
+            Chk1.Checked := nPlan[5]='Y';
          end;
     end;
 
@@ -154,7 +158,7 @@ begin
 end;
 
 procedure TfFormSalePlan.BtnOKClick(Sender: TObject);
-var nGroupId, nPlanName, nSql : string;
+var nGroupId, nDf, nPlanName, nSql : string;
 begin
   nPlanName := Trim(edt_Name.Text);
   if nPlanName='' then
@@ -170,31 +174,34 @@ begin
     Exit;
   end;
 
+  if Chk1.Checked then nDf:= 'Y'
+  else nDf:= 'N';
   try
     nGroupId:= GetLeftStr('¡¢', cbb_GroupName.Text);
-
     if FID='' then
     begin
-      nSql := 'Insert into $Table (S_PlanName,S_StockGID,S_StartTime,S_EndTime,S_Man,S_Date) '+
-                        'Select ''$PlanName'', $GID, ''$STime'', ''$ETime'', ''$Man'', GetDate()';
+      nSql := 'Insert into $Table (S_PlanName,S_StockGID,S_StartTime,S_EndTime,S_Man,S_Date,S_StopCreate) '+
+                        'Select ''$PlanName'', $GID, ''$STime'', ''$ETime'', ''$Man'', GetDate(), ''$DF'' ';
 
       nSql := MacroValue(nSql, [MI('$Table' , sTable_SalePlan),
                                 MI('$PlanName', nPlanName), MI('$GID', nGroupId),
                                 MI('$STime' , DateTime2Str(DateEdt_STime.Date)),
                                 MI('$ETime' , DateTime2Str(DateEdt_ETime.Date)),
-                                MI('$Man', gSysParam.FUserName)]);
+                                MI('$Man', gSysParam.FUserName),
+                                MI('$DF',  nDf)]);
     end
     else
     begin
       nSql := ' UPDate $Table Set S_PlanName=''$PlanName'',S_StockGID=$GID, S_StartTime=''$STime'','+
-                             'S_EndTime=''$ETime'',S_Man=''$Man'',S_Date=GetDate() '+
+                             'S_EndTime=''$ETime'',S_Man=''$Man'',S_Date=GetDate(),S_StopCreate=''$DF''  '+
               ' Where R_ID=$RID ';
 
       nSql := MacroValue(nSql, [MI('$Table' , sTable_SalePlan),
                                 MI('$PlanName', nPlanName), MI('$GID', nGroupId),
                                 MI('$STime' , DateTime2Str(DateEdt_STime.Date)),
                                 MI('$ETime' , DateTime2Str(DateEdt_ETime.Date)),
-                                MI('$Man', gSysParam.FUserName), MI('$RID', FID)]);
+                                MI('$Man', gSysParam.FUserName), MI('$DF',  nDf),
+                                MI('$RID', FID)]);
     end;
 
     FDM.ExecuteSQL(nSql);

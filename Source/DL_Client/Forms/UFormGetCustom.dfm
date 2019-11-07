@@ -1,8 +1,8 @@
 inherited fFormGetCustom: TfFormGetCustom
-  Left = 401
-  Top = 134
-  Width = 445
-  Height = 320
+  Left = 594
+  Top = 184
+  Width = 578
+  Height = 362
   BorderStyle = bsSizeable
   Constraints.MinHeight = 300
   Constraints.MinWidth = 445
@@ -11,17 +11,17 @@ inherited fFormGetCustom: TfFormGetCustom
   PixelsPerInch = 96
   TextHeight = 12
   inherited dxLayout1: TdxLayoutControl
-    Width = 429
-    Height = 281
+    Width = 562
+    Height = 323
     inherited BtnOK: TButton
-      Left = 283
-      Top = 248
+      Left = 416
+      Top = 290
       Caption = #30830#23450
       TabOrder = 5
     end
     inherited BtnExit: TButton
-      Left = 353
-      Top = 248
+      Left = 486
+      Top = 290
       TabOrder = 6
     end
     object EditSMan: TcxComboBox [2]
@@ -103,20 +103,15 @@ inherited fFormGetCustom: TfFormGetCustom
           Control = EditCus
           ControlOptions.ShowBorder = False
         end
-        object dxLayout1Group2: TdxLayoutGroup
-          ShowCaption = False
-          Hidden = True
-          ShowBorder = False
-          object dxLayout1Item3: TdxLayoutItem
-            Caption = #19994#21153#20154#21592':'
-            Control = EditSMan
-            ControlOptions.ShowBorder = False
-          end
-          object dxLayout1Item4: TdxLayoutItem
-            Caption = #23458#25143'('#36873'):'
-            Control = EditCustom
-            ControlOptions.ShowBorder = False
-          end
+        object dxLayout1Item3: TdxLayoutItem
+          Caption = #19994#21153#20154#21592':'
+          Control = EditSMan
+          ControlOptions.ShowBorder = False
+        end
+        object dxLayout1Item4: TdxLayoutItem
+          Caption = #23458#25143'('#36873'):'
+          Control = EditCustom
+          ControlOptions.ShowBorder = False
         end
         object dxLayout1Item7: TdxLayoutItem
           Caption = 'cxLabel1'

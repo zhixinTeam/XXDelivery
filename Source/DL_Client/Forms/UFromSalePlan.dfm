@@ -2,7 +2,7 @@ inherited fFormSalePlan: TfFormSalePlan
   Left = 703
   Top = 271
   Caption = #21697#31181#38480#37327#35745#21010
-  ClientHeight = 227
+  ClientHeight = 259
   ClientWidth = 421
   Font.Height = -13
   Font.Name = #24494#36719#38597#40657
@@ -11,16 +11,16 @@ inherited fFormSalePlan: TfFormSalePlan
   TextHeight = 19
   inherited dxLayout1: TdxLayoutControl
     Width = 421
-    Height = 227
+    Height = 259
     inherited BtnOK: TButton
       Left = 272
-      Top = 191
-      TabOrder = 4
+      Top = 223
+      TabOrder = 5
     end
     inherited BtnExit: TButton
       Left = 342
-      Top = 191
-      TabOrder = 5
+      Top = 223
+      TabOrder = 6
     end
     object DateEdt_STime: TcxDateEdit [2]
       Left = 93
@@ -78,6 +78,25 @@ inherited fFormSalePlan: TfFormSalePlan
       TabOrder = 1
       Width = 207
     end
+    object Chk1: TcxCheckBox [6]
+      Left = 29
+      Top = 178
+      Caption = #26410#35774#32622#26412#35745#21010#23458#25143#31105#27490#24320#21333
+      ParentColor = False
+      ParentFont = False
+      State = cbsChecked
+      Style.Color = clWhite
+      Style.Font.Charset = GB2312_CHARSET
+      Style.Font.Color = clBlack
+      Style.Font.Height = -13
+      Style.Font.Name = #24494#36719#38597#40657
+      Style.Font.Style = []
+      Style.TextColor = clRed
+      Style.TextStyle = [fsBold]
+      Style.IsFontAssigned = True
+      TabOrder = 4
+      Width = 346
+    end
     inherited dxLayout1Group_Root: TdxLayoutGroup
       inherited dxGroup1: TdxLayoutGroup
         object dxlytmLayout1Item35: TdxLayoutItem
@@ -106,6 +125,12 @@ inherited fFormSalePlan: TfFormSalePlan
             AutoAligns = [aaVertical]
             Caption = #32467#26463#26102#38388#65306
             Control = DateEdt_ETime
+            ControlOptions.ShowBorder = False
+          end
+          object dxlytmLayout1Item3: TdxLayoutItem
+            Caption = 'cxCheckBox1'
+            ShowCaption = False
+            Control = Chk1
             ControlOptions.ShowBorder = False
           end
         end

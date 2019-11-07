@@ -126,8 +126,10 @@ type
     function get_shoporderByTruck(var nData: string): boolean;
     //根据车牌号获取订单信息
 
-    //function GetCusOrderCreateStatus(nCusId, nType: string;nNum:Double;var nMax:Double; var nCanCreate:Boolean): Boolean;
+    function GetCusOrderCreateStatus_(nCusId, nType: string;nNum:Double;var nMax:Double; var nCanCreate:Boolean): Boolean;
+    // 客户 散装按车 袋装按吨 限量
     function GetCusOrderCreateStatus(nCID, nMID: string;nValue:Double;var nMax:Double;var ReData:string;var nCanCreate:Boolean): Boolean;
+    // 客户、品种分组限量
     function GetProviderOrderCreateStatus(nProId,nMId: string;var nMax:Double; var nCanCreate:Boolean): Boolean;
 
     function GetCustomerInfo(var nData: string): Boolean;                       // Dl--->WxService
@@ -835,8 +837,8 @@ begin
     wParam.Free;
   end;
 end;
-                                 {
-function TBusWorkerBusinessWebchat.GetCusOrderCreateStatus(nCusId, nType: string;nNum:Double;
+
+function TBusWorkerBusinessWebchat.GetCusOrderCreateStatus_(nCusId, nType: string;nNum:Double;
                         var nMax:Double; var nCanCreate:Boolean): Boolean;
 var nStr, nTime: string;
     nMaxValue, nMaxNum, nVal:Double;
@@ -857,7 +859,13 @@ begin
     nMaxValue:= Fieldbyname('C_MaxValue').AsFloat;
     nMaxNum  := Fieldbyname('C_MaxNum').AsFloat;
 
-    WriteLog(Fieldbyname('C_Name').AsString+'限量 C_MaxValue:'+FloatToStr(nMaxValue)+' C_MaxNum:'+FloatToStr(nMaxNum));
+    WriteLog(Fieldbyname('C_Name').AsString+' 限量 C_MaxValue:'+FloatToStr(nMaxValue)+' C_MaxNum:'+FloatToStr(nMaxNum));
+  end;
+
+  if nType='' then
+  begin
+    WriteLog('无法确定物料类型、拒绝开单');
+    Exit;
   end;
 
   if nType='S' then
@@ -869,11 +877,16 @@ begin
                               MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,1)))]);
     with gDBConnManager.WorkerQuery(FDBConn, nStr) do
     begin
-      nCanCreate := nMaxNum>Fieldbyname('Num').AsFloat;
+      nCanCreate := nMaxNum>=(Fieldbyname('Num').AsFloat+1);
 
       if nMaxNum>Fieldbyname('Num').AsFloat then
         nMax:= nMaxNum-Fieldbyname('Num').AsFloat
       else nMax:= 0;
+
+
+      WriteLog(nCusId +' 限车 MaxNum:'+FloatToStr(nMaxNum)+
+                                             ' 已开量:'+FloatToStr(Fieldbyname('Num').AsFloat)+
+                                             ' 允许开单:'+BoolToStr(nCanCreate, True));
     end;
   end
   else
@@ -887,18 +900,18 @@ begin
     begin
       nVal:= Fieldbyname('Value').AsFloat+nNum;
       nCanCreate := nMaxValue>=nVal;
-      WriteLog(nCusId +' 限量 C_MaxValue:'+FloatToStr(nMaxValue)+
-                                           ' 已开量:'+FloatToStr(Fieldbyname('Value').AsFloat)+
-                                           ' 本次开量:'+FloatToStr(nNum)+
-                                           ' 允许开单:'+BoolToStr(nCanCreate, True));
-
       if nMaxValue>=Fieldbyname('Value').AsFloat then
         nMax:= nMaxValue-Fieldbyname('Value').AsFloat
       else nMax:= 0;
+
+      WriteLog(nCusId +' 限吨 MaxValue:'+FloatToStr(nMaxValue)+
+                                           ' 已开量:'+FloatToStr(Fieldbyname('Value').AsFloat)+
+                                           ' 本次开量:'+FloatToStr(nNum)+
+                                           ' 允许开单:'+BoolToStr(nCanCreate, True));
     end;
   end;
   Result:= True;
-end;    }
+end;
 
 function TBusWorkerBusinessWebchat.GetCusOrderCreateStatus(nCID, nMID: string;nValue:Double;
              var nMax:Double;var ReData:string;var nCanCreate:Boolean): Boolean;
@@ -941,9 +954,10 @@ begin
       Exit;
     end;
 
-    nStr := ' Select d.*, isNull(S_MaxValue, 0) MaxValue, isNull(S_MaxNum, 0) MaxNum, a.S_StartTime, a.S_EndTime From %s d Left Join %s a On S_PlanID= a.R_ID ' +
+    nStr := ' Select d.*, isNull(S_MaxValue, -1) MaxValue, isNull(S_MaxNum, -1) MaxNum, a.S_StartTime, a.S_EndTime From %s d Left Join %s a On S_PlanID= a.R_ID ' +
             ' Where S_IsValid=''Y'' And S_CusID=''%s'' And S_StockGID=%s And GETDATE()>=S_StartTime And GETDATE()<=S_EndTime ';
-    nStr := Format(nStr,[sTable_SalePlanDtl, sTable_SalePlan, nCID, nGID]);   WriteLog(nStr);
+    nStr := Format(nStr,[sTable_SalePlanDtl, sTable_SalePlan, nCID, nGID]);
+    //WriteLog(nStr);
     with gDBConnManager.WorkerQuery(nDBConn, nStr) do
     begin
       if recordcount>0 then
@@ -955,8 +969,23 @@ begin
       end
       else
       begin
-        Result:= True;
-        WriteLog('未查询到限量计划、默认允许开单');
+        nStr := ' Select * From %s Where S_IsValid=''Y'' And S_StockGID=%s And GETDATE()>=S_StartTime And GETDATE()<=S_EndTime ';
+        nStr := Format(nStr,[sTable_SalePlan, nGID]);
+        with gDBConnManager.WorkerQuery(nDBConn, nStr) do
+        begin
+          if recordcount>0 then
+          begin
+            nCanCreate:= FieldByName('S_StopCreate').AsString='N';
+            Result:= nCanCreate;
+            WriteLog('查询到该品种分组限量计划、允许开单 '+BoolToStr(Result, True));
+          end
+          else
+          begin
+            Result:= True;
+            WriteLog('未查询到限量计划、默认允许开单');
+          end;
+        end;
+
         Exit;
       end;
     end;
@@ -965,36 +994,58 @@ begin
     nStr := 'Select COUNT(*) Num, SUM(ISNULL(Value, 0)) Value, D_ParamA From $Bill Left Join Sys_Dict On D_ParamB=StockNo '+
             'Where  D_Name=''StockItem'' And CusID=''$CID'' And D_ParamA=$GID And (CreateDate>=''$STime'' And CreateDate<''$ETime'') ' +
             'Group  by  D_ParamA' ;
-    nStr := MacroValue(nStr, [MI('$Bill', sTable_BillWx),
-                              MI('$CID', nCID), MI('$GID', nGID),
-                              MI('$STime', FormatDateTime('yyyy-MM-dd '+nTime, Now)),
-                              MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,1)))]);
+
+    if Now<=StrToDateTime( FormatDateTime('yyyy-MM-dd '+nTime, Now) )  then
+    begin
+      nStr := MacroValue(nStr, [MI('$Bill', sTable_BillWx),
+                                MI('$CID', nCID), MI('$GID', nGID),
+                                MI('$STime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,-1))),
+                                MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, Now))]);
+    end
+    else
+    begin                                            
+
+      nStr := MacroValue(nStr, [MI('$Bill', sTable_BillWx),
+                                MI('$CID', nCID), MI('$GID', nGID),
+                                MI('$STime', FormatDateTime('yyyy-MM-dd '+nTime, Now)),
+                                MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,1) ))]);
+    end;
+
+    WriteLog(nStr);
     with gDBConnManager.WorkerQuery(nDBConn, nStr) do
     begin       
       if recordcount>0 then
-      if nMaxValue=0 then
       begin
-        nCanCreate := nMaxNum>Fieldbyname('Num').AsFloat;
+        if nMaxNum>0 then
+        begin
+          nCanCreate := nMaxNum>=(Fieldbyname('Num').AsFloat+1);
 
-        if nMaxNum>Fieldbyname('Num').AsFloat then
-          nMax:= nMaxNum-Fieldbyname('Num').AsFloat
-        else nMax:= 0;
-      end
-      else
-      begin
-        nCanCreate := nMaxValue>Fieldbyname('Value').AsFloat;
+          if nMaxNum>Fieldbyname('Num').AsFloat then
+            nMax:= nMaxNum-Fieldbyname('Num').AsFloat
+          else nMax:= 0;
+        end
+        else IF nMaxValue>0 then
+        begin
+          nCanCreate := nMaxValue>=(nValue+Fieldbyname('Value').AsFloat);
 
-        if nMaxValue>=Fieldbyname('Value').AsFloat then
-          nMax:= nMaxValue-Fieldbyname('Value').AsFloat
-        else nMax:= 0;
+          if nMaxValue>Fieldbyname('Value').AsFloat then
+            nMax:= nMaxValue-Fieldbyname('Value').AsFloat
+          else nMax:= 0;
+        end
+        else
+        begin
+          nMax:= 0;
+          Exit;
+        end;
       end;
+      
+      Result:= True;
     end;
-    Result:= True;
   finally
     begin
       gDBConnManager.ReleaseConnection(nDBConn);
-      
-      if nMaxValue=0 then
+
+      if nMaxNum>0 then
       begin
         ReData:= FloatToStr(nMax)+' 车';
         WriteLog(nCID +' '+ nMName + ' 允许开单:'+BoolToStr(nCanCreate, True) + ' 剩余:'+FloatToStr(nMax)+' 车');
@@ -1215,6 +1266,7 @@ begin
       begin
         {$IFDEF WXCreateOrderCtrl}
         GetCusOrderCreateStatus(FIn.FData, FieldByName('O_StockID').AsString,0,nMax,nStr,nCanCreate);
+        //GetCusOrderCreateStatus_(FIn.FData, FieldByName('O_StockType').AsString,0,nMax,nCanCreate);
 
         if nCanCreate then
         {$ENDIF}
@@ -1223,7 +1275,7 @@ begin
             NodeNew('SetDate').ValueAsString    := FieldByName('O_Create').AsString;
             NodeNew('BillNumber').ValueAsString := FieldByName('O_Order').AsString;
             NodeNew('StockNo').ValueAsString    := FieldByName('O_StockID').AsString;
-            NodeNew('StockName').ValueAsString  := FieldByName('O_StockName').AsString; //+ FieldByName('O_StockType').AsString
+            NodeNew('StockName').ValueAsString  := FieldByName('O_StockName').AsString;   //+ FieldByName('O_StockType').AsString
             NodeNew('StockType').ValueAsString  := FieldByName('O_StockType').AsString;
             {$IFDEF SyncDataByWSDL}
             try
@@ -1604,7 +1656,7 @@ begin
     ParamJo.S['body'] := BodyJo.AsString;
     nStr := ParamJo.AsString;
 
-    WriteLog('微信用户列表入参：' + nStr);
+    WriteLog('微信订单列表入参：' + nStr);
 
     wParam.Clear;
     wParam.Add(nStr);
@@ -4325,8 +4377,8 @@ begin
   try
     BodyJo.S['facSerialNo']:= gSysParam.FFactID;    // 'zxygc171223111220640999';
     BodyJo.S['searchType'] := '4';
-    BodyJo.S['queryWord']  := FormatDateTime('yyyy-MM-dd HH:mm:ss', IncDay(Now, -1))+';'+FormatDateTime('yyyy-MM-dd HH:mm:ss', Now);
-
+    BodyJo.S['queryWord']  := FormatDateTime('yyyy-MM-dd HH:mm:ss', IncMinute(Now, -30))+';'+FormatDateTime('yyyy-MM-dd HH:mm:ss', Now);
+                                                                     
     ParamJo.S['activeCode']  := Cus_ShopOrder;
     ParamJo.S['body'] := BodyJo.AsString;
     nStr := ParamJo.AsString;
@@ -4473,9 +4525,7 @@ begin
         if (nOType='1') then       ///1  销售   2  采购
         begin
           GetCusOrderCreateStatus(nCusID,nStockNo,nNum,nMax,nStr,Result);
-          if nSType='S' then
-               nData:= Format('该品种剩余可开 %s', [nCusID, nStr])
-          else nData:= Format('该品种剩余可开 %s', [nCusID, nStr]);
+          nData:= Format('已限量,您剩余可开 %s', [nStr]);
         end
         else
         begin

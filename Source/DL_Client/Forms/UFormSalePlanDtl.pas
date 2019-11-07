@@ -54,8 +54,10 @@ type
     procedure BtnOKClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure cbb_PlanPropertiesChange(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
     FID : string;
+    FListCus : TStrings;
   private
     procedure IniData;
     procedure LoadPlans(nPlanID: string);
@@ -149,6 +151,7 @@ begin
 
             Rb1.Checked:= Trim(edt_MaxNum.Text)<>'';
             Rb2.Checked:= Trim(edt_MaxValue.Text)<>'';
+            Edt_CusName.Enabled:= False;
          end;
     end;
 
@@ -170,12 +173,16 @@ end;
 procedure TfFormSalePlanDtl.Edt_EditCus1PropertiesButtonClick(
   Sender: TObject; AButtonIndex: Integer);
 var nParam: TFormCommandParam;
+    nStr:string;
 begin
-  CreateBaseFormItem(cFI_FormGetCustom, PopedomItem, @nParam);
+  CreateBaseFormItem(cFI_FormBatchGetCus, PopedomItem, @nParam);
   if (nParam.FParamA = mrOk) then
   begin
-    lbl_CusID.Caption:= nParam.FParamB;
-    Edt_CusName.Text := nParam.FParamC;
+    nStr:= GetRightStr(',', nParam.FParamB);
+    FListCus.CommaText:= nStr;
+
+    lbl_CusID.Caption:= Copy(nStr, 0, 30)+' ...';
+    Edt_CusName.Text := nParam.FParamC + ' 等（'+inttoStr(FListCus.Count)+'个）';
   end;
 end;
 
@@ -207,6 +214,11 @@ begin
   end;
 
   //*******
+  if (not Rb1.Checked)and(not Rb2.Checked) then
+  begin
+    ShowMsg('请选择限量方式', '提示');  
+    Exit;
+  end;
   nMaxNum:= StrToIntDef(Trim(edt_MaxNum.Text), -1);
   if (Rb1.Checked) And (nMaxNum<0) then
   begin
@@ -224,14 +236,17 @@ begin
   try
     if FID='' then
     begin
+      nCusID:= AdjustListStrFormat2(FListCus, '''', True, ',', False);
+      //*****
       nSql := 'Insert into $Table (S_PlanID,S_PlanName,S_MaxNum,S_MaxValue,S_CusID,S_CusName,S_Man,S_Date) '+
-                        'Select ''$PlanID'',''$PlanName'', $MaxNum, $MaxValue, ''$CusID'', ''$CusName'', ''$Man'', GetDate()';
+                        'Select ''$PlanID'',''$PlanName'', $MaxNum, $MaxValue, C_ID, C_Name, ''$Man'', GetDate() '+
+                        'From S_Customer Where C_ID In ($CusIDs)';
 
       nSql := MacroValue(nSql, [MI('$Table' , sTable_SalePlanDtl),
                                 MI('$PlanID', nPlanId), MI('$PlanName', nPlanName),
                                 MI('$MaxNum', SF_IF([IntToStr(nMaxNum), 'Null'], Rb1.Checked)),
                                 MI('$MaxValue', SF_IF([FloatToStr(nMaxValue), 'Null'], Rb2.Checked) ),
-                                MI('$CusID', nCusID), MI('$CusName', nCusName),
+                                MI('$CusIDs', nCusID),
                                 MI('$Man', gSysParam.FUserName)]);
     end
     else
@@ -252,7 +267,12 @@ begin
     ModalResult := mrOk;
     ShowMsg('操作成功', '提示');
   except
-    ShowMsg('操作失败', '提示');
+    on Ex: Exception do
+    begin
+      //ShowMsg('操作失败：' + Ex.Message, '提示');
+      ShowMessage('操作失败：' + Ex.Message + ' '+nSql);
+      Exit;
+    end;
   end;
 end;
 
@@ -294,12 +314,19 @@ end;
 procedure TfFormSalePlanDtl.FormCreate(Sender: TObject);
 var nStr : string;
 begin
+  FListCus := TStringList.Create;
   LoadPlans('');
 end;
 
 procedure TfFormSalePlanDtl.cbb_PlanPropertiesChange(Sender: TObject);
 begin
   LoadPlans(GetLeftStr('、',Trim(cbb_Plan.Text)));
+end;
+
+procedure TfFormSalePlanDtl.FormDestroy(Sender: TObject);
+begin
+  inherited;
+  FreeAndNil(FListCus);
 end;
 
 initialization

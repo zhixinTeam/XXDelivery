@@ -17,7 +17,7 @@ uses
   UFrameAuthorize, UFormOptions, UFormBaseInfo, UFrameTrucks, UFormTruck,
   UFormRFIDCard, UFormReadCard, UFormMemo,
   //base info
-  UFrameCustomer, UFormCustomer, UFormGetCustom,
+  UFrameCustomer, UFormCustomer, UFormGetCustom,                       
   UFrameBill, UFormBill, UFormGetZhiKa, UFormGetTruck,
   UFormCard, UFrameBillCard, UFormTruckIn, UFrameTruckQuery,UFrameQueryDiapatch,
   UFramePoundAuto, UFramePoundManual, UFramePoundQuery, UFrameZTDispatch,
@@ -38,7 +38,8 @@ uses
   //for huayan
   UFrameOrderCard,UFramePurchaseOrder,UFrameOrderDetail,UFrameOtherCard,
   UFormCardOther,UFormPurchaseOrder,UFormGetPOrderBase,UFormPurchasing,
-  UFrameStockGroup,UFormStockGroup,UFormEditStockGroup,UFrameSalePlan,UFromSalePlan,UFormSalePlanDtl;
+  UFrameStockGroup,UFormStockGroup,UFormEditStockGroup,UFrameSalePlan,UFromSalePlan,
+  UFormSalePlanDtl, UFormBatchGetCus;
   //for sale
 
 

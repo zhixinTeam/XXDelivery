@@ -24,7 +24,6 @@ type
     dxLayout1Item5: TdxLayoutItem;
     ListCustom: TcxListView;
     dxLayout1Item6: TdxLayoutItem;
-    dxLayout1Group2: TdxLayoutGroup;
     cxLabel1: TcxLabel;
     dxLayout1Item7: TdxLayoutItem;
     procedure FormCreate(Sender: TObject);

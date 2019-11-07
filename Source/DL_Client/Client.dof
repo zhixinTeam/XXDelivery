@@ -135,30 +135,38 @@ ProductName=KGDelivery
 ProductVersion=1.0.0.0
 Comments=水泥物流发货系统客户端
 [Excluded Packages]
+C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Indy_D7.bpl=RemObjects SDK - Indy Library
 C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_DataSnap_D7.bpl=RemObjects SDK - DataSnap Integration Pack
-C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Synapse_D7.bpl=RemObjects SDK - Synapse based Channels
+C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Synapse_D7.bpl=RemObjects SDK - Synapse Library
+C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Server_D7.bpl=RemObjects SDK - Server Library
 C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Server_IDE_D7.bpl=RemObjects SDK - Server IDE Integration for Win32
+C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Server_Indy_D7.bpl=RemObjects SDK - Server Indy Library
 C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Server_DataSnap_D7.bpl=RemObjects SDK - Server DataSnap Integration Pack
+C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_Server_Synapse_D7.bpl=RemObjects SDK - Server Synapse Library
+C:\Program Files (x86)\RemObjects Software\RemObjects SDK for Delphi\Dcu\D7\RemObjects_WebBroker_D7.bpl=RemObjects SDK - WebBroker Library
 [HistoryLists\hlUnitAliases]
 Count=1
 Item0=WinTypes=Windows;WinProcs=Windows;DbiTypes=BDE;DbiProcs=BDE;DbiErrs=BDE;
 [HistoryLists\hlSearchPath]
-Count=8
-Item0=../Common;Common;Forms
-Item1=Common;Forms;../../Common
-Item2=Common;Forms../../Common
-Item3=Common;Forms
-Item4=D:\PCB\VCL\FastReport.v253.FS\Source;D:\PCB\VCL\SPCOMM
-Item5=D:\PCB\销售管理\FastReport\Source;D:\PCB\销售管理\SPCOMM
-Item6=D:\PCB\销售管理\FastReport\Source
-Item7=D:\PCB\进货管理\FastReport\Source
+Count=9
+Item0=Common;Forms;../Common
+Item1=../Common;Common;Forms
+Item2=Common;Forms;../../Common
+Item3=Common;Forms../../Common
+Item4=Common;Forms
+Item5=D:\PCB\VCL\FastReport.v253.FS\Source;D:\PCB\VCL\SPCOMM
+Item6=D:\PCB\销售管理\FastReport\Source;D:\PCB\销售管理\SPCOMM
+Item7=D:\PCB\销售管理\FastReport\Source
+Item8=D:\PCB\进货管理\FastReport\Source
 [HistoryLists\hlUnitOutputDirectory]
-Count=3
-Item0=../../Dcu/DL_Client
-Item1=../Dcu/DL_Client
-Item2=../Dcu
+Count=4
+Item0=../../Dcu/Client
+Item1=../../Dcu/DL_Client
+Item2=../Dcu/DL_Client
+Item3=../Dcu
 [HistoryLists\hlOutputDirectorry]
-Count=3
-Item0=../../Bin/DL_Client
-Item1=../Bin/DL_Client
-Item2=../Bin
+Count=4
+Item0=../../Bin/Client
+Item1=../../Bin/DL_Client
+Item2=../Bin/DL_Client
+Item3=../Bin

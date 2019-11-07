@@ -17,7 +17,8 @@ uses
   UFormStockGroup in 'Forms\UFormStockGroup.pas' {fFormStockGroup},
   UFormEditStockGroup in 'Forms\UFormEditStockGroup.pas' {fFormEditStockGroup},
   UFromSalePlan in 'Forms\UFromSalePlan.pas' {fFormSalePlan},
-  UFormSalePlanDtl in 'Forms\UFormSalePlanDtl.pas' {fFormSalePlanDtl};
+  UFormSalePlanDtl in 'Forms\UFormSalePlanDtl.pas' {fFormSalePlanDtl},
+  UFormBatchGetCus in 'Forms\UFormBatchGetCus.pas' {fFormBatchGetCus};
 
 {$R *.res}
 var
@@ -46,11 +47,6 @@ begin
   Application.Initialize;
   Application.CreateForm(TFDM, FDM);
   Application.CreateForm(TfMainForm, fMainForm);
-  Application.CreateForm(TfFormPurchasePlan, fFormPurchasePlan);
-  Application.CreateForm(TfFormStockGroup, fFormStockGroup);
-  Application.CreateForm(TfFormEditStockGroup, fFormEditStockGroup);
-  Application.CreateForm(TfFormSalePlan, fFormSalePlan);
-  Application.CreateForm(TfFormSalePlanDtl, fFormSalePlanDtl);
   Application.Run;
 
   ReleaseMutex(gMutexHwnd);

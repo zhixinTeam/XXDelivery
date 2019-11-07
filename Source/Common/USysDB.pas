@@ -1446,7 +1446,8 @@ const
 
   sSQL_SalePlan = 'Create Table $Table(R_ID $Inc, S_PlanName  varchar(32) NULL,' +
             'S_StockGID  int NULL, S_StartTime DateTime NULL,S_EndTime   DateTime NULL,' +
-            'S_Man varchar(20) NULL,S_Date DateTime NULL,S_IsValid   Char(1) Not Null Default ''YY'')';
+            'S_Man varchar(20) NULL,S_Date DateTime NULL,S_IsValid Char(1) Not Null Default ''Y'','+
+            'S_StopCreate Char(1) Not Null Default ''Y'')';
   {-----------------------------------------------------------------------------
    限量计划表: Sys_SalePlan
    *.R_ID         : 计划编号
@@ -1457,6 +1458,7 @@ const
    *.S_Man        : 操作人
    *.S_Date       : 操作时间
    *.S_IsValid    : 是否有效
+   *.S_StopCreate : 禁止未设置计划用户开单
   -----------------------------------------------------------------------------}
 
   sSQL_SalePlanDtl = 'Create Table $Table(R_ID $Inc, S_PlanID int NULL, S_PlanName varchar(20) NULL,' +

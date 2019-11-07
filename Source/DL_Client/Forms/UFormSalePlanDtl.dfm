@@ -1,17 +1,19 @@
 inherited fFormSalePlanDtl: TfFormSalePlanDtl
-  Left = 870
-  Top = 268
+  Left = 664
+  Top = 261
   Caption = #23458#25143#12289#21697#31181#20998#32452#38480#37327
-  ClientHeight = 354
-  ClientWidth = 395
+  ClientHeight = 357
+  ClientWidth = 428
   Font.Height = -15
   Font.Name = #24494#36719#38597#40657
+  Position = poOwnerFormCenter
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 20
   inherited dxLayout1: TdxLayoutControl
-    Width = 395
-    Height = 354
+    Width = 428
+    Height = 357
     object lbl_Cus: TLabel [0]
       Left = 31
       Top = 156
@@ -151,13 +153,13 @@ inherited fFormSalePlanDtl: TfFormSalePlanDtl
       Layout = tlCenter
     end
     inherited BtnOK: TButton
-      Left = 245
-      Top = 317
+      Left = 278
+      Top = 320
       TabOrder = 6
     end
     inherited BtnExit: TButton
-      Left = 315
-      Top = 317
+      Left = 348
+      Top = 320
       TabOrder = 7
     end
     object Edt_CusName: TcxButtonEdit [11]

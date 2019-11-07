@@ -337,6 +337,18 @@ begin
     except
     end;
     //²åÈëÉ¾³ýÍÆËÍ
+
+    nStr := 'Select * From %s Where WOM_LID==''%s'' ';
+    nStr := Format(nStr, [sTable_WebOrderMatch, nLID]);
+    with FDM.QueryTemp(nStr) do
+    if RecordCount > 0 then
+    begin
+      nLID:= Fieldbyname('WOM_WebOrderID').AsString;
+    end;
+
+    nStr := 'Delete %s Where ID=%s';
+    nStr := Format(nStr, [sTable_BillWx, nLID]);
+    FDM.ExecuteSQL(nStr);
   end;
 end;
 

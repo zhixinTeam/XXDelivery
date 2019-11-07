@@ -215,7 +215,7 @@ end;
 
 procedure TfFrameSalePlan.BtnEditClick(Sender: TObject);
 var nParam: TFormCommandParam;
-    nStr, nPName, nMaxNum, nMaxValue, nSTime, nETime : string;
+    nStr, nPName, nMaxNum, nMaxValue, nSTime, nETime,nDef : string;
     nPlanID, nPlanName, nStockGID, nCusId, nCusName : string;
 begin
   if cxGrid1.ActiveLevel = cxLevel1 then
@@ -238,8 +238,9 @@ begin
     nStockGID:= SQLQuery.FieldByName('Grid').AsString +'、'+SQLQuery.FieldByName('G_Name').AsString;
     nSTime   := SQLQuery.FieldByName('S_StartTime').AsString;
     nETime   := SQLQuery.FieldByName('S_EndTime').AsString;
+    nDef     := SQLQuery.FieldByName('S_StopCreate').AsString;
     //*************
-    nStr := Format('%s,%s,%s,%s,%s', [nStr, nPName, nStockGID, nSTime, nETime]);
+    nStr := Format('%s,%s,%s,%s,%s,%s', [nStr, nPName, nStockGID, nSTime, nETime, nDef]);
     nParam.FParamA := StringReplace(nStr, ' ', '@', [rfReplaceAll]);
     CreateBaseFormItem(cFI_FormSalePlan, PopedomItem, @nParam);
     ///  销售限量计划
