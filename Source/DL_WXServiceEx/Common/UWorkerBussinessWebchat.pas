@@ -2128,8 +2128,10 @@ end;
 function TBusWorkerBusinessWebchat.GetProviderOrderCreateStatus(nProId,nMId: string;var nMax:Double; var nCanCreate:Boolean): Boolean;
 var nStr, nTime: string;
     nMaxNum : Double;
+    nMatlHasPlan:Boolean;
 begin
-  Result:= False;
+  Result:= False;      nMax:= 0;
+  nMatlHasPlan:= False;
   nStr := 'Select D_Value From %s Where D_Name=''SysParam'' And D_Memo=''SalePurPlanTime''' ;
   nStr := Format(nStr,[sTable_SysDict, nProId]);
   with gDBConnManager.WorkerQuery(FDBConn, nStr) do
@@ -2138,21 +2140,50 @@ begin
   end;
   if nTime='' then nTime:= '07:30:00';
 
+  nStr := 'Select * From %s Where P_MID=''%s'' ' ;
+  nStr := 'Select top 2 * From %s ' ;
+  nStr := Format(nStr,[sTable_PurchasePlan, nProId, nMId]);
+  with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+  begin
+    if Recordcount=0 then
+    begin
+      nMax:= 10000;
+      Result:= True;   nCanCreate:= True;
+      WriteLog(Format('%s, %s 未开启限量计划、允许下单',[nProId,nMId]));
+      Exit;
+    end;
+
+    WriteLog(Format('已开启采购原料限量计划',[nMId]));
+  end;
+
   nStr := 'Select isNull(P_MaxNum, 100000) P_MaxNum From %s Where P_PrvID=''%s'' And P_MID=''%s'' ' ;
   nStr := Format(nStr,[sTable_PurchasePlan, nProId, nMId]);
   with gDBConnManager.WorkerQuery(FDBConn, nStr) do
   begin
-    nCanCreate:= recordcount=0;
-    if nCanCreate then Exit;
-    
+    if (recordcount=0) then
+    begin
+      WriteLog(Format('%s, %s 未查询到限量计划、禁止下单',[nProId,nMId]));
+      Exit;
+    end;
+
     nMaxNum:= Fieldbyname('P_MaxNum').AsFloat;
   end;
 
   nStr := 'Select IsNull(COUNT(*), 0) Num From $Bill '+
           'Where CusID=''$CID'' And StockNo=''$StockNo'' And (CreateDate>=''$STime'' And CreateDate<''$ETime'') ' ;
-  nStr := MacroValue(nStr, [MI('$Bill', sTable_BillWx), MI('$CID', nProId), MI('$StockNo', nMId),
-                            MI('$STime', FormatDateTime('yyyy-MM-dd '+nTime, Now)),
-                            MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,1)))]);
+  if Now<=StrToDateTime( FormatDateTime('yyyy-MM-dd '+nTime, Now) )  then
+  begin
+    nStr := MacroValue(nStr, [MI('$Bill', sTable_BillWx), MI('$CID', nProId), MI('$StockNo', nMId),
+                              MI('$STime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,-1))),
+                              MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, Now))]);
+  end
+  else
+  begin
+    nStr := MacroValue(nStr, [MI('$Bill', sTable_BillWx), MI('$CID', nProId), MI('$StockNo', nMId),
+                              MI('$STime', FormatDateTime('yyyy-MM-dd '+nTime, Now)),
+                              MI('$ETime', FormatDateTime('yyyy-MM-dd '+nTime, IncDay(Now,1) ))]);
+  end;
+
   with gDBConnManager.WorkerQuery(FDBConn, nStr) do
   begin
     nCanCreate:= recordcount=0;
