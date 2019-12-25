@@ -198,6 +198,7 @@ const
   sFlag_HHJYDepotID   = 'HHJYDepotID';               //恒河久远存货场ID
 
   sFlag_ERPSrv        = 'ERPService';                //ERP接口地址
+  sFlag_ERPType       = 'ERPType';                   //ERP模式类别
   sFlag_PackType      = 'PackType';                  //包装类型
   sFlag_PrinterBill   = 'PrinterBill';               //小票打印机
   sFlag_PrinterHYDan  = 'PrinterHYDan';              //化验单打印机
@@ -400,6 +401,8 @@ const
   sTable_OrderBase     = 'P_OrderBase';              //采购申请订单
   sTable_CardOther     = 'S_CardOther';              //临时称重
   sTable_OrderBaseMain = 'P_OrderBaseMain';          //采购申请订单主表
+
+  sTable_OrderLocal    = 'P_OrderLocal';             //采购订单本地存储
 
     sFlag_Order         = 'Bus_Order';                 //采购单号
     sFlag_OrderDtl      = 'Bus_OrderDtl';              //采购单号
@@ -1222,6 +1225,26 @@ const
    *.DATAAREAID：账套
   -----------------------------------------------------------------------------}
 
+  sSQL_NewOrderLocal = 'Create Table $Table(R_ID $Inc,'
+      +'L_Order varchar(50) null,'
+      +'L_ProName varchar(100) null,'
+      +'L_ProID varchar(50),'
+      +'L_StockName varchar(100),'
+      +'L_StockID varchar(50),'
+      +'L_StockNo varchar(50),'
+      +'L_Value $Float)';
+  {-----------------------------------------------------------------------------
+   采购订单本地表:
+   *.R_ID: 记录编号
+   *.L_Order: 单据号
+   *.L_ProName: 供应商名称
+   *.L_ProID:   供应商编号
+   *.L_StockName: 品种名称
+   *.L_StockID: 品种编号
+   *.L_StockNo: 品种编号
+   *.L_Value: 订单量
+  -----------------------------------------------------------------------------}
+
     sSQL_NewOrder = 'Create Table $Table(R_ID $Inc, O_ID varChar(20),' +
        'O_BID varChar(20),O_Card varChar(16), O_CType varChar(1),' +
        'O_Value $Float,O_OppositeValue $Float,O_Area varChar(50), O_Project varChar(100),' +
@@ -1604,6 +1627,7 @@ begin
   AddSysTableItem(sTable_OrderDtl, sSQL_NewOrderDtl);
   AddSysTableItem(sTable_OrderDtlBak, sSQL_NewOrderDtl);
   AddSysTableItem(sTable_OrderBase, sSQL_NewOrderBase);
+  AddSysTableItem(sTable_OrderLocal, sSQL_NewOrderLocal);
   AddSysTableItem(sTable_CardOther, sSQL_NewCardOther);
   AddSysTableItem(sTable_OrderBaseMain, sSQL_NewOrdBaseMain);
 

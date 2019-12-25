@@ -51,7 +51,7 @@ type
 
   TBusWorkerBusinessHHJY = class(TMITDBWorker)
   private
-    FListA,FListB,FListC,FListD,FListE: TStrings;
+    FListA,FListB,FListC,FListD,FListE,FListF,FListG: TStrings;
     //list
     FIn: TWorkerHHJYData;
     FOut: TWorkerHHJYData;
@@ -282,6 +282,8 @@ begin
   FListC := TStringList.Create;
   FListD := TStringList.Create;
   FListE := TStringList.Create;
+  FListF := TStringList.Create;
+  FListG := TStringList.Create;
   inherited;
 end;
 
@@ -292,6 +294,8 @@ begin
   FreeAndNil(FListC);
   FreeAndNil(FListD);
   FreeAndNil(FListE);
+  FreeAndNil(FListF);
+  FreeAndNil(FListG);
   inherited;
 end;
 
@@ -776,6 +780,15 @@ var nStr, nCusID, nCusName, nType, nArea: string;
     nOnlYMoney : Boolean;
 begin
   Result := False;
+  //离线模式
+  if gSysParam.FERPType = 0 then
+  begin
+    Result             := True;
+    FOut.FData         := nData;
+    FOut.FBase.FResult := True;
+    Exit;
+  end;
+
   nCusID := PackerDecodeStr(FIn.FData);
   nOnlYMoney := FIn.FExtParam = sFlag_Yes;
   if Trim(nCusID) = '' then
@@ -2584,6 +2597,7 @@ var nStr: string;
     nJSRow: TlkJSONlist;
     nJSCol: TlkJSONobject;
     nValue: Double;
+    nOut: TWorkerBusinessCommand;
 begin
   Result := False;
   nStr := PackerDecodeStr(FIn.FData);
@@ -2591,6 +2605,49 @@ begin
   FListD.Clear;
 
   FListD.Text := nStr;
+
+  //离线模式
+  if gSysParam.FERPType = 0 then
+  begin
+    FListA.Clear;
+    FListC.Clear;
+    
+    nStr := ' Select * From $Pound pl ';
+    nStr := nStr + ' Where L_ProID = ''$CD''';
+
+    nStr := MacroValue(nStr, [MI('$Pound', sTable_OrderLocal), MI('$CD', FListD.Values['ProviderNo'])]);
+
+    WriteLog('采购订单查询SQL:' + nStr);
+
+    with gDBConnManager.WorkerQuery(FDBConn, nStr) do
+    begin
+      First;
+      while not Eof do
+      begin
+        FListB.Clear;
+        with FListB do
+        begin
+          Values['Order']         := FieldByName('L_Order').AsString;
+          Values['ProName']       := FListD.Values['ProviderName'];
+          Values['ProID']         := FListD.Values['ProviderNo'];
+          Values['StockName']     := FieldByName('L_StockName').AsString;
+          Values['StockID']       := FieldByName('L_StockID').AsString;
+          Values['StockNo']       := FieldByName('L_StockNo').AsString;
+
+          Values['Value']         := '10000';//剩余量
+
+          FListA.Add(PackerEncodeStr(FListB.Text));
+        end;
+        Next;
+      end;
+      nData := PackerEncodeStr(FListA.Text);
+    end;
+    
+    Result             := True;
+    FOut.FData         := nData;
+    FOut.FBase.FResult := True;
+    Exit;
+  end;
 
   try
     WriteLog('获取普通原材料订单入参'+nStr);
@@ -2629,8 +2686,14 @@ begin
         Exit;
       end;
 
-      FListA.Clear;
-      FListC.Clear;
+    FListA.Clear;
+    FListC.Clear;
+    FListE.Clear;
+    FListF.Clear;
+    FListG.Clear;
+
+    FDBConn.FConn.BeginTrans;
+    try
       for nIdx := 0 to nJSRow.Count - 1 do
       begin
         nJSCol:= nJSRow.Child[nIdx] as TlkJSONobject;
@@ -2655,6 +2718,46 @@ begin
 
           FListA.Add(PackerEncodeStr(FListB.Text));
         end;
+        //存储本地数据库
+        nStr := SF('L_ProID', FListD.Values['ProviderNo']) + ' and '+SF('L_StockID', FListC.Values['cInvCode']);
+        nStr := MakeSQLByStr([
+              SF('L_ProName',   FListD.Values['ProviderName']),
+              SF('L_ProID',     FListD.Values['ProviderNo']),
+              SF('L_StockName', FListC.Values['cInvName']),
+              SF('L_StockID',   FListC.Values['cInvCode']),
+              SF('L_StockNo',   FListC.Values['cInvCode']),
+              SF('L_Value',     '10000')
+              ], sTable_OrderLocal, nStr, False);
+
+          if gDBConnManager.WorkerExec(FDBConn,nStr) <= 0 then
+          begin
+            FListG.Clear;
+            FListG.Values['Group']  :=sFlag_BusGroup;
+            FListG.Values['Object'] := sFlag_WTNo;
+            //to get serial no
+
+            if not TWorkerBusinessCommander.CallMe(cBC_GetSerialNO,
+                  FListG.Text, sFlag_Yes, @nOut) then
+              raise Exception.Create(nOut.FData);
+            //xxxxx
+
+            nStr := MakeSQLByStr([
+                SF('L_Order',     nOut.FData),
+                SF('L_ProName',   FListD.Values['ProviderName']),
+                SF('L_ProID',     FListD.Values['ProviderNo']),
+                SF('L_StockName', FListC.Values['cInvName']),
+                SF('L_StockID',   FListC.Values['cInvCode']),
+                SF('L_StockNo',   FListC.Values['cInvCode']),
+                SF('L_Value',     '10000')
+                ], sTable_OrderLocal, '', True);
+            gDBConnManager.WorkerExec(FDBConn,nStr)
+          end;
+      end;
+      FDBConn.FConn.CommitTrans;
+      except
+        if FDBConn.FConn.InTransaction then
+          FDBConn.FConn.RollbackTrans;
+        raise;
       end;
       nData := PackerEncodeStr(FListA.Text);
     end

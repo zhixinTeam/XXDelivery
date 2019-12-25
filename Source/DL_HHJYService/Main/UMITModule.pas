@@ -80,6 +80,8 @@ var nStr: string;
     nWorker: PDBWorker;
     nIdx: Integer;
 begin
+  gSysParam.FERPType := 1;
+  
   nWorker := nil;
   try
     nStr := 'Select U_CID,U_Url,U_Password, U_DefWhere From %s ';
@@ -127,6 +129,9 @@ begin
 
         if nStr = sFlag_ERPSrv then
           gSysParam.FERPSrv := Fields[0].AsString;
+
+        if nStr = sFlag_ERPType then
+          gSysParam.FERPType := Fields[0].AsInteger;
         //local mit
 
         Next;

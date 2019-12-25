@@ -88,6 +88,8 @@ type
     FHHJYUrl    : array of THHJYUrl;                 //恒河久远接口服务
 
     FERPSrv     : string;                            //ERP接口地址
+
+    FERPType    : Integer;                            //发送模式 0:离线模式；1:ERP模式
   end;
   //系统参数
 
