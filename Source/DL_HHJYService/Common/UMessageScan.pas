@@ -186,6 +186,8 @@ begin
     FWaiter.EnterWait;
     if Terminated then Exit;
 
+    if gSysParam.FERPType = 0 then  Continue;
+    
     Inc(FNumOutFactMsg);
 
     if FNumOutFactMsg >= 3 then
@@ -212,6 +214,11 @@ begin
       begin
         if RecordCount < 1 then
           Continue;
+
+        //离线模式
+//        if gSysParam.FERPType = 0 then
+//          Continue;
+
         //无新消息
         nSuccessCount := 0;
         nFailCount := 0;

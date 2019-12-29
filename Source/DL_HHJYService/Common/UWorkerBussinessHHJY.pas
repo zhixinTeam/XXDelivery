@@ -783,6 +783,7 @@ begin
   //ÀëÏßÄ£Ê½
   if gSysParam.FERPType = 0 then
   begin
+    nData              := IntToStr(1000000);
     Result             := True;
     FOut.FData         := nData;
     FOut.FBase.FResult := True;
@@ -830,8 +831,8 @@ begin
     end;
     nMoney := StrToFloat(VarToStr(nJS.Field['Money'].Value));
 
-    if nMoney < 0 then
-      nMoney := 0 - nMoney;
+//    if nMoney < 0 then
+//      nMoney := 0 - nMoney;
 
     if nOnlYMoney then
     begin
