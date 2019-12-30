@@ -143,5 +143,7 @@
   //限量控制
   {$DEFINE UseWXServiceEx}
   //使用微信二期
+  {$DEFINE PurNoPlanCanCreate}
+  //未设置限量计划供应商允许下单（只限制设置计划客户）
 {$ENDIF}
 
