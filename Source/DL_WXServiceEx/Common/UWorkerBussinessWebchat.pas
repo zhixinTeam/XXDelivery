@@ -2162,7 +2162,12 @@ begin
   begin
     if (recordcount=0) then
     begin
+      {$IFDEF PurNoPlanCanCreate}
+      WriteLog(Format('%s, %s 未查询到限量计划、允许下单',[nProId,nMId]));
+      Result:= True; nCanCreate:= True;
+      {$ELSE}
       WriteLog(Format('%s, %s 未查询到限量计划、禁止下单',[nProId,nMId]));
+      {$ENDIF}
       Exit;
     end;
 
