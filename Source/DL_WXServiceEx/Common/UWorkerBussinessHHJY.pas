@@ -339,7 +339,11 @@ begin
     nMoney := StrToFloat(VarToStr(nJS.Field['Money'].Value));
 
     if nMoney < 0 then
-      nMoney := 0 - nMoney;
+    begin
+      nData := '客户金额不足：' + VarToStr(nJS.Field['Money'].Value);
+      WriteLog(nData);
+      Exit;
+    end;
 
     if nOnlYMoney then
     begin
