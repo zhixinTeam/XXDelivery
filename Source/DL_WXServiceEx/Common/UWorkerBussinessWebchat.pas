@@ -2140,9 +2140,8 @@ begin
   end;
   if nTime='' then nTime:= '07:30:00';
 
-  nStr := 'Select * From %s Where P_MID=''%s'' ' ;
   nStr := 'Select top 2 * From %s ' ;
-  nStr := Format(nStr,[sTable_PurchasePlan, nProId, nMId]);
+  nStr := Format(nStr,[sTable_PurchasePlan]);
   with gDBConnManager.WorkerQuery(FDBConn, nStr) do
   begin
     if Recordcount=0 then
