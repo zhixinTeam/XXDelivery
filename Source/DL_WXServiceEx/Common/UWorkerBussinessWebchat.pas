@@ -1237,7 +1237,7 @@ begin
           '  O_Lading,' +                          //提货方式
           '  O_Money' +                          //提货方式
           ' From %s ' +
-          ' Where O_Valid=''%s'' And O_CusID=''%s''';
+          ' Where O_Valid=''%s'' And O_CusID=''%s'' And O_Price > 0 ';
           //订单有效
     nStr := Format(nStr,[sTable_SalesOrder,sFlag_Yes, FIn.FData]);
     WriteLog('获取订单列表sql:' + nStr);
