@@ -1254,6 +1254,7 @@ begin
             SF('O_KD', FListA.Values['KD']),
             SF('O_Year', FListA.Values['Year']),
             SF('O_Memo', FListA.Values['Memo']),
+//            SF('O_DrvName', FListA.Values['DrvName']),   //666666
             SF('O_PrintBD', FListA.Values['PrintBD']),
             SF('O_expiretime', FListA.Values['expiretime'],sfDateTime)
             ], sTable_Order, '', True);

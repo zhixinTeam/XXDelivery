@@ -576,6 +576,7 @@ begin
             SF('L_Man',         FIn.FBase.FFrom.FUser),
             SF('L_Date',        sField_SQLServer_Now, sfVal),
             SF('L_WT',          FListA.Values['WT']),
+//            SF('L_DrvName',     FListA.Values['DrvName']),  666666
             SF('L_MValueMax',   FListA.Values['MaxMValue'])
             ], sTable_Bill, '', True);
     gDBConnManager.WorkerExec(FDBConn, nStr);

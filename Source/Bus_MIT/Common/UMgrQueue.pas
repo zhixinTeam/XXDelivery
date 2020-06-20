@@ -1315,10 +1315,21 @@ begin
     nLine.FRealCount := nLine.FRealCount + 1;
   //实位车辆计数
   
+//  if (nTruck.FDai <= 0) and (nTruck.FTruckPeerWeight > 0) then
+//  begin
+//    nTruck.FDai := Trunc(nTruck.FValue * 1000 / nTruck.FTruckPeerWeight);
+//    //dai number
+//  end;
+
   if (nTruck.FDai <= 0) and (nTruck.FTruckPeerWeight > 0) then
   begin
-    nTruck.FDai := Trunc(nTruck.FValue * 1000 / nTruck.FTruckPeerWeight);
+    //WriteLog('车辆' + nTruck.FTruck + '开单量' + FloatToStr(nTruck.FValue));
+    if IsNumber(FloatToStr(nTruck.FValue), False) then
+      nTruck.FDai := Trunc(nTruck.FValue * 1000 / nTruck.FTruckPeerWeight)
+    else
+      nTruck.FDai := Round(nTruck.FValue * 1000 / nTruck.FTruckPeerWeight);
     //dai number
+    //WriteLog('车辆' + nTruck.FTruck + '袋数' + IntToStr(nTruck.FDai));
   end;
 
   if (nTruck.FTruckPeerWeight > 0) and
@@ -1450,8 +1461,17 @@ begin
           nTruck.FIndex := FIndex;
 
           nTruck.FValue := FValue;
-          if nTruck.FTruckPeerWeight>0 then
-            nTruck.FDai := Trunc(FValue * 1000 / nTruck.FTruckPeerWeight);
+//          if nTruck.FTruckPeerWeight>0 then
+//            nTruck.FDai := Trunc(FValue * 1000 / nTruck.FTruckPeerWeight);
+
+          if nTruck.FTruckPeerWeight > 0 then
+          begin
+            if IsNumber(FloatToStr(FValue), False) then
+              nTruck.FDai := Trunc(FValue * 1000 / nTruck.FTruckPeerWeight)
+            else
+              nTruck.FDai := Round(FValue * 1000 / nTruck.FTruckPeerWeight);
+          //xxxxx
+          end;
 
           nTruck.FBill  := FBill;
           nTruck.FHKBills := FHKBills;
